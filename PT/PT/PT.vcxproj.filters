@@ -12,9 +12,15 @@
     <ClCompile Include="image_reconstruction.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="findingPieces.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_reconstruction.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="finding_pieces.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
