@@ -5,6 +5,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "image_reconstruction.hpp"
+
 
 namespace {
 
@@ -54,16 +56,17 @@ int main(const int argc, const char *argv[])
 	if (!loadImage(inputFilePath, inputImage))
 		return -1;
 
-	//DUMMY CODE HERE
+	cv::Mat outputImage;
+	if (!reconstructImage(inputImage, outputImage))
+		return -1;
+
+	#ifdef _DEBUG
 	cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
-	cv::imshow("Display window", inputImage);
+	cv::imshow("Display window", outputImage);
 	cv::waitKey(0);
-	//END OF DUMMY CODE
+	#endif
 
-	//TODO reconstruct image
-
-	//TODO saveImage
-	if (!saveImage(outputFilePath, inputImage))
+	if (!saveImage(outputFilePath, outputImage))
 		return -1;
 
 	return 0;
