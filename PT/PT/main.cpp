@@ -10,9 +10,14 @@
 
 namespace {
 
-	void showHelp()
+	void showHelp(const std::string &programPath)
 	{
-		std::cout << "TODO help" << std::endl;
+		std::cout << "This program tries to reconstruct the original look of a document\nwhich was cutted by a shredder.\n";
+		std::cout << '\n';
+		std::cout << "Usage:\t'" << programPath << "' INPUT_FILE OUTPUT_FILE\n";
+		std::cout << "\tINPUT_FILE\tA path to a raster graphics file,\n\t\t\twhich contains a cutted image to reconstruct.\n";
+		std::cout << "\tOUTPUT_FILE\tA path to a file which will be created by the program.\n\t\t\tIt will contain the reconstructed image.\n\t\t\tWARNING: If this file already exists\n\t\t\tits current content will be deleted!";
+		std::cout << std::endl;
 	}
 
 	bool loadImage(const std::string &inputFilePath, cv::Mat &image)
@@ -39,14 +44,15 @@ namespace {
 
 int main(const int argc, const char *argv[])
 {
+	const std::string programPath = argv[0];
 	if (argc >= 2 && (std::strcmp(argv[1], "--help") == 0))
 	{
-		showHelp();
+		showHelp(programPath);
 		return 0;
 	}
 	if (argc != 3)
 	{
-		std::cerr << "Program takes 2 arguments!\nEnter \"'" << argv[0] << "' --help\" for more informations." << std::endl;
+		std::cerr << "Program takes 2 arguments!\nEnter \"'" << programPath << "' --help\" for more informations." << std::endl;
 		return -1;
 	}
 	const std::string inputFilePath = argv[1];
