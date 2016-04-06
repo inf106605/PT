@@ -82,13 +82,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Desktop\Nowy folder\PT\PT\PT\finding_pieces.hpp" />
-    <ClInclude Include="..\..\..\..\..\Desktop\Nowy folder\PT\PT\PT\image_reconstruction.hpp" />
+    <ClCompile Include="findingPieces.cpp" />
+    <ClCompile Include="image_reconstruction.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Desktop\Nowy folder\PT\PT\PT\findingPieces.cpp" />
-    <ClCompile Include="..\..\..\..\..\Desktop\Nowy folder\PT\PT\PT\image_reconstruction.cpp" />
-    <ClCompile Include="..\..\..\..\..\Desktop\Nowy folder\PT\PT\PT\main.cpp" />
+    <ClInclude Include="finding_pieces.hpp" />
+    <ClInclude Include="image_reconstruction.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
