@@ -95,12 +95,25 @@ namespace {
 		}
 	}
 
+	void showResult(cv::Mat inputImage, squares_t &contours)
+	{
+		//cv::Mat drawing = cv::Mat::zeros(cv::canny_output.size(), CV_8UC3);
+		cv::RNG rng(12345);
+		for (unsigned i = 0; i< contours.size(); i++)
+		{
+			cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+			cv::drawContours(inputImage, contours, i, color, 5);
+		}
+		showImage(inputImage);
+	}
+
 }
 
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
 	squares_t squares;
 	findSquares(inputImage, squares);
+	showResult(inputImage, squares);
 	//TODO
 	std::list<cv::Mat> result;
 	return result;
