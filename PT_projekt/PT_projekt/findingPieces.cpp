@@ -77,7 +77,8 @@ namespace {
 					// contour orientation
 					if (approx.size() == 4 &&
 							std::fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
-							cv::isContourConvex(cv::Mat(approx)))
+							cv::isContourConvex(cv::Mat(approx)) &&
+							std::fabs(cv::contourArea(cv::Mat(approx))) < image.cols * image.rows / 2)
 					{
 						double maxCosine = 0;
 
