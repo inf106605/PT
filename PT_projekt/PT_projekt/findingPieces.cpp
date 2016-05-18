@@ -95,8 +95,10 @@ namespace {
 		}
 	}
 
-	void cropImage(cv::Mat image, rectangles_t squares)
+	std::list<cv::Mat> cropImage(cv::Mat image, rectangles_t squares)
 	{
+		std::list<cv::Mat> listCropImage;
+
 		const std::string name = "./pieces/piece";
 		const std::string extension = ".jpg";
 		for (size_t i = 0; i < squares.size(); i++)
@@ -105,10 +107,12 @@ namespace {
 			cv::Mat subimage(image, rectangle);
 			std::string filename = name + std::to_string(i) + extension;
 			cv::imwrite(filename, subimage);
+			listCropImage.push_back(subimage);
 			//showImage(subimage);
 			//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
 		}
 
+		return listCropImage;
 	}
 
 }
@@ -118,7 +122,6 @@ std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 	rectangles_t rectangles;
 	findSquares(inputImage, rectangles);
 	filterOutOverlappingRectangles(rectangles);
-	cropImage(inputImage, rectangles);
-	std::list<cv::Mat> result; //TODO
+	std::list<cv::Mat> result = cropImage(inputImage, rectangles);
 	return result;
 }
