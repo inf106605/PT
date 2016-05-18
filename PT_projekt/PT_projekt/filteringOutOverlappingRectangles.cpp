@@ -94,7 +94,7 @@ namespace {
 
 }//
 
-void filterOutOverlappingRectangles(rectangles_t &rectangles)
+rectangles_t filterOutOverlappingRectangles(const rectangles_t &rectangles)
 {
 	std::vector<bool> selectionOfRectangles;
 	size_t count = chooseNotOverlapedSquares(rectangles, selectionOfRectangles);
@@ -103,5 +103,5 @@ void filterOutOverlappingRectangles(rectangles_t &rectangles)
 	for (std::size_t i = 0; i != rectangles.size(); ++i)
 	if (selectionOfRectangles[i])
 		result.push_back(rectangles[i]);
-	rectangles = std::move(result);
+	return std::move(result);
 }

@@ -27,8 +27,10 @@ namespace {
 		return angle;
 	}
 
-	void findSquares(const cv::Mat& image, rectangles_t &squares)
+	rectangles_t findSquares(const cv::Mat& image)
 	{
+		rectangles_t result;
+
 		// blur will enhance edge detection
 		cv::Mat blurred(image.size(), image.type());
 		cv::medianBlur(image, blurred, 9);  //9? It pretty much.
@@ -88,11 +90,12 @@ namespace {
 						}
 
 						if (maxCosine < 0.3)
-							squares.push_back(approx);
+							result.push_back(approx);
 					}
 				}
 			}
 		}
+		return result;
 	}
 
 	std::list<cv::Mat> cropImage(cv::Mat image, rectangles_t squares)
@@ -119,9 +122,8 @@ namespace {
 
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
-	rectangles_t rectangles;
-	findSquares(inputImage, rectangles);
-	filterOutOverlappingRectangles(rectangles);
+	rectangles_t rectangles = findSquares(inputImage);
+	rectangles = filterOutOverlappingRectangles(rectangles);
 	std::list<cv::Mat> result = cropImage(inputImage, rectangles);
 	return result;
 }

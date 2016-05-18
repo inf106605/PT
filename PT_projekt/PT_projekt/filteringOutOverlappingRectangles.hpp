@@ -8,4 +8,4 @@ typedef std::vector<cv::Point> rectangle_t;
 typedef std::vector<rectangle_t> rectangles_t;
 
 
-void filterOutOverlappingRectangles(rectangles_t &rectangles);
+rectangles_t filterOutOverlappingRectangles(const rectangles_t &rectangles);
