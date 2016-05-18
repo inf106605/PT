@@ -95,38 +95,26 @@ namespace {
 		}
 	}
 
-	void showResult(cv::Mat inputImage, rectangles_t &contours)
+	void cropImage(cv::Mat image, rectangles_t squares)
 	{
-		//cv::Mat drawing = cv::Mat::zeros(cv::canny_output.size(), CV_8UC3);
-		cv::RNG rng(12345);
-		for (unsigned i = 0; i< contours.size(); i++)
+		const std::string name = "./pieces/piece";
+		const std::string extension = ".jpg";
+
+		if (image.data == NULL)
 		{
-			cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-			cv::drawContours(inputImage, contours, i, color, 5);
+			std::cout << "Error load piece";
 		}
-		showImage(inputImage);
-	}
 
-}
+		for (size_t i = 0; i < squares.size(); i++)
+		{
+			cv::Rect rectangle = cv::boundingRect(cv::Mat(squares[i]));
+			cv::Mat subimage(image, rectangle);
+			std::string filename = name + std::to_string(i) + extension;
+			cv::imwrite(filename, subimage);
+			//showImage(subimage);
+			//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
+		}
 
-void cropImage(cv::Mat image, rectangles_t squares)
-{
-	const std::string name = "./obrazki/piece";
-	const std::string extension = ".jpg";
-
-	if (image.data == NULL)
-	{
-		std::cout << "Error load piece";
-	}
-
-	for (size_t i = 0; i < squares.size(); i++)
-	{
-		cv::Rect rectangle = cv::boundingRect(cv::Mat(squares[i]));
-		cv::Mat subimage(image, rectangle);
-		std::string filename = name + std::to_string(i) + extension;
-		cv::imwrite(filename, subimage);
-		//showImage(subimage);
-		//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
 	}
 
 }
@@ -136,10 +124,7 @@ std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 	rectangles_t rectangles;
 	findSquares(inputImage, rectangles);
 	filterOutOverlappingRectangles(rectangles);
-	showResult(inputImage, rectangles);
-	//TODO
 	cropImage(inputImage, rectangles);
-
-	std::list<cv::Mat> result;
+	std::list<cv::Mat> result; //TODO
 	return result;
 }
