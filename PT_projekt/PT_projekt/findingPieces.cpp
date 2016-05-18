@@ -1,6 +1,7 @@
 #include "finding_pieces.hpp"
 
 #include <vector>
+#include <iostream>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -110,12 +111,36 @@ namespace {
 
 }
 
+void cropImage(cv::Mat image, squares_t squares)
+{
+	const std::string name = "./obrazki/piece";
+	const std::string extension = ".jpg";
+
+	if (image.data == NULL)
+	{
+		std::cout << "Error load piece";
+	}
+
+	for (size_t i = 0; i < squares.size(); i++)
+	{
+		cv::Rect rectangle = cv::boundingRect(cv::Mat(squares[i]));
+		cv::Mat subimage(image, rectangle);
+		std::string filename = name + std::to_string(i) + extension;
+		cv::imwrite(filename, subimage);
+		//showImage(subimage);
+		//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
+	}
+
+}
+
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
 	squares_t squares;
 	findSquares(inputImage, squares);
 	showResult(inputImage, squares);
 	//TODO
+	cropImage(inputImage, squares);
+
 	std::list<cv::Mat> result;
 	return result;
 }
