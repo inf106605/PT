@@ -5,12 +5,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "filteringOutOverlappingRectangles.hpp"
+
 
 namespace {
-
-	typedef std::vector<cv::Point> square_t;
-	typedef std::vector<square_t> squares_t;
-
 
 	void showImage(const cv::Mat &image)
 	{
@@ -28,14 +26,14 @@ namespace {
 		return angle;
 	}
 
-	void findSquares(const cv::Mat& image, squares_t &squares)
+	void findSquares(const cv::Mat& image, rectangles_t &squares)
 	{
 		// blur will enhance edge detection
 		cv::Mat blurred(image);
 		cv::medianBlur(image, blurred, 9);  //9? It pretty much.
 
 		cv::Mat gray0(blurred.size(), CV_8U), gray;
-		squares_t contours;
+		rectangles_t contours;
 
 		// find squares in every color plane of the image
 		for (int c = 0; c < 3; c++)
@@ -65,7 +63,7 @@ namespace {
 				cv::findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
 
 				// Test contours
-				square_t approx;
+				rectangle_t approx;
 				for (size_t i = 0; i < contours.size(); i++)
 				{
 					// approximate contour with accuracy proportional
@@ -96,7 +94,7 @@ namespace {
 		}
 	}
 
-	void showResult(cv::Mat inputImage, squares_t &contours)
+	void showResult(cv::Mat inputImage, rectangles_t &contours)
 	{
 		//cv::Mat drawing = cv::Mat::zeros(cv::canny_output.size(), CV_8UC3);
 		cv::RNG rng(12345);
@@ -112,9 +110,10 @@ namespace {
 
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
-	squares_t squares;
-	findSquares(inputImage, squares);
-	showResult(inputImage, squares);
+	rectangles_t rectangles;
+	findSquares(inputImage, rectangles);
+	filterOutOverlappingRectangles(rectangles);
+	showResult(inputImage, rectangles);
 	//TODO
 	std::list<cv::Mat> result;
 	return result;

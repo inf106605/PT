@@ -93,11 +93,10 @@ int main(const int argc, const char *argv[])
 	if (!loadImage(inputFilePath, inputImage))
 		return -1;
 
-	cropImage(inputImage);
+	//cropImage(inputImage);
 
 	cv::waitKey(0);
 
-	/*
 	cv::Mat outputImage;
 	if (!reconstructImage(inputImage, outputImage))
 		return -1;
@@ -110,6 +109,6 @@ int main(const int argc, const char *argv[])
 
 	if (!saveImage(outputFilePath, outputImage))
 		return -1;
-	*/
+
 	return 0;
 }
