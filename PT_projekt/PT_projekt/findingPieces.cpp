@@ -30,7 +30,7 @@ namespace {
 	void findSquares(const cv::Mat& image, rectangles_t &squares)
 	{
 		// blur will enhance edge detection
-		cv::Mat blurred(image);
+		cv::Mat blurred(image.size(), image.type());
 		cv::medianBlur(image, blurred, 9);  //9? It pretty much.
 
 		cv::Mat gray0(blurred.size(), CV_8U), gray;
@@ -77,7 +77,7 @@ namespace {
 					if (approx.size() == 4 &&
 							std::fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
 							cv::isContourConvex(cv::Mat(approx)) &&
-							std::fabs(cv::contourArea(cv::Mat(approx))) < image.cols * image.rows / 2)
+							std::fabs(cv::contourArea(cv::Mat(approx))) < blurred.cols * blurred.rows / 2)
 					{
 						double maxCosine = 0;
 
@@ -99,12 +99,6 @@ namespace {
 	{
 		const std::string name = "./pieces/piece";
 		const std::string extension = ".jpg";
-
-		if (image.data == NULL)
-		{
-			std::cout << "Error load piece";
-		}
-
 		for (size_t i = 0; i < squares.size(); i++)
 		{
 			cv::Rect rectangle = cv::boundingRect(cv::Mat(squares[i]));
