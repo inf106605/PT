@@ -82,11 +82,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="filteringOutOverlappingRectangles.cpp" />
     <ClCompile Include="findingPieces.cpp" />
     <ClCompile Include="image_reconstruction.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="filteringOutOverlappingRectangles.hpp" />
     <ClInclude Include="finding_pieces.hpp" />
     <ClInclude Include="image_reconstruction.hpp" />
   </ItemGroup>
