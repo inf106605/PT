@@ -41,6 +41,37 @@ namespace {
 
 } //
 
+void cropImage(cv::Mat image)
+{
+	if (image.data == NULL)
+	{
+		std::cerr << "Error load piece";
+	}
+
+	int orgRows = image.rows;
+	int orgCols = image.cols;
+
+	int crpRows = orgRows / 2;
+	int crpCols = orgCols / 2;
+
+	cv::Mat crop_image(crpRows, crpCols, CV_8UC3);
+
+	for (int i = 0; i < crpRows; i++)
+	for (int j = 0; j < crpCols; j++)
+	{
+		cv::Vec3b intensity = image.at < cv::Vec3b >(i, j);
+		cv::Vec3b & intensityToBe = crop_image.at<cv::Vec3b>(i, j);
+		for (int k = 0; k < image.channels(); k++)
+			intensityToBe.val[k] = intensity.val[k];
+	}
+
+	cvNamedWindow("Org", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("Cropped", CV_WINDOW_AUTOSIZE);
+
+	cv::imshow("Org", image);
+	cv::imshow("Cropped", crop_image);
+
+}
 
 int main(const int argc, const char *argv[])
 {
@@ -62,6 +93,11 @@ int main(const int argc, const char *argv[])
 	if (!loadImage(inputFilePath, inputImage))
 		return -1;
 
+	cropImage(inputImage);
+
+	cv::waitKey(0);
+
+	/*
 	cv::Mat outputImage;
 	if (!reconstructImage(inputImage, outputImage))
 		return -1;
@@ -74,6 +110,6 @@ int main(const int argc, const char *argv[])
 
 	if (!saveImage(outputFilePath, outputImage))
 		return -1;
-
+	*/
 	return 0;
 }
