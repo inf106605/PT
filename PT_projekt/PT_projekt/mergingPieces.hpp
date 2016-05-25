@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <list>
+#include <vector>
 
 #include "arrangingPieces.hpp"
 
 
-cv::Mat mergePieces(const std::list<ArrangedPiece> &arrangedPieces);
+cv::Mat mergePieces(const std::vector<ArrangedPiece> &arrangedPieces);

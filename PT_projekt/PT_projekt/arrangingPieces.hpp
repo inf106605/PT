@@ -2,6 +2,7 @@
 
 
 #include <list>
+#include <vector>
 
 #include <opencv2/core/core.hpp>
 
@@ -22,4 +23,4 @@ struct ArrangedPiece
 };
 
 
-std::list<ArrangedPiece> arrangePieces(const std::list<cv::Mat> &pieces);
+std::vector<ArrangedPiece> arrangePieces(const std::list<cv::Mat> &pieces);
