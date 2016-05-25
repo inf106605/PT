@@ -1,4 +1,4 @@
-#include "finding_pieces.hpp"
+#include "findingPieces.hpp"
 
 #include <vector>
 #include <iostream>
@@ -98,7 +98,7 @@ namespace {
 		return result;
 	}
 
-	std::list<cv::Mat> cropImage(cv::Mat image, rectangles_t squares)
+	std::list<cv::Mat> cropImages(cv::Mat image, rectangles_t squares)
 	{
 		std::list<cv::Mat> listCropImage;
 
@@ -124,6 +124,6 @@ std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
 	rectangles_t rectangles = findSquares(inputImage);
 	rectangles = filterOutOverlappingRectangles(rectangles);
-	std::list<cv::Mat> result = cropImage(inputImage, rectangles);
+	std::list<cv::Mat> result = cropImages(inputImage, rectangles);
 	return result;
 }

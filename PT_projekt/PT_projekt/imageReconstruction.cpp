@@ -1,24 +1,20 @@
-#include "image_reconstruction.hpp"
+#include "imageReconstruction.hpp"
 
 #include <iostream>
 #include <vector>
 
-#include "finding_pieces.hpp"
-
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
-void cropImage(cv::Mat image);
-void showImage(const cv::Mat &image);
+
+#include "findingPieces.hpp"
+
 
 bool reconstructImage(const cv::Mat &inputImage, cv::Mat &outputImage)
 {
 	std::list<cv::Mat> pieces = findPieces(inputImage);
-
-	std::list<cv::Mat> cropImageIterators;
-	
-	std::cerr << "The image reconstruction is not imnplemented yet!" << std::endl;
-	return false;
+	outputImage = inputImage.clone();
+	return true;
 }
 
 void showImage(const cv::Mat &image)
