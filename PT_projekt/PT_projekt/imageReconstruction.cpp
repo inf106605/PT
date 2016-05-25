@@ -8,12 +8,15 @@
 #include <opencv2\imgproc\imgproc.hpp>
 
 #include "findingPieces.hpp"
+#include "arrangingPieces.hpp"
+#include "mergingPieces.hpp"
 
 
 bool reconstructImage(const cv::Mat &inputImage, cv::Mat &outputImage)
 {
-	std::list<cv::Mat> pieces = findPieces(inputImage);
-	outputImage = inputImage.clone();
+	const std::list<cv::Mat> pieces = findPieces(inputImage);
+	const std::list<ArrangedPiece> arrangedPieces = arrangePieces(pieces);
+	outputImage = mergePieces(arrangedPieces);
 	return true;
 }
 

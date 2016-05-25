@@ -82,16 +82,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="arrangingPieces.cpp" />
     <ClCompile Include="filteringOutOverlappingRectangles.cpp" />
     <ClCompile Include="findingPieces.cpp" />
     <ClCompile Include="imageReconstruction.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mergingPieces.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arrangingPieces.hpp" />
     <ClInclude Include="filteringOutOverlappingRectangles.hpp" />
     <ClInclude Include="findingPieces.hpp" />
     <ClInclude Include="imageReconstruction.hpp" />
+    <ClInclude Include="mergingPieces.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
