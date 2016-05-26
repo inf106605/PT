@@ -1,8 +1,5 @@
 #include "imageReconstruction.hpp"
 
-#include <iostream>
-#include <vector>
-
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
@@ -14,8 +11,8 @@
 
 bool reconstructImage(const cv::Mat &inputImage, cv::Mat &outputImage)
 {
-	const std::list<cv::Mat> pieces = findPieces(inputImage);
-	const std::list<ArrangedPiece> arrangedPieces = arrangePieces(pieces);
+	const auto pieces = findPieces(inputImage);
+	const auto arrangedPieces = arrangePieces(pieces);
 	outputImage = mergePieces(arrangedPieces);
 	return true;
 }
