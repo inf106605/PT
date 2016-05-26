@@ -54,7 +54,7 @@ namespace {
 				{
 					cv::Canny(gray0, gray, 10, 20, 3); // 
 
-												   // Dilate helps to remove potential holes between edge segments
+					// Dilate helps to remove potential holes between edge segments
 					cv::dilate(gray, gray, cv::Mat(), cv::Point(-1, -1));
 				}
 				else
@@ -77,9 +77,9 @@ namespace {
 					// area may be positive or negative - in accordance with the
 					// contour orientation
 					if (approx.size() == 4 &&
-							std::fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
-							cv::isContourConvex(cv::Mat(approx)) &&
-							std::fabs(cv::contourArea(cv::Mat(approx))) < blurred.cols * blurred.rows / 2)
+						std::fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
+						cv::isContourConvex(cv::Mat(approx)) &&
+						std::fabs(cv::contourArea(cv::Mat(approx))) < blurred.cols * blurred.rows / 2)
 					{
 						double maxCosine = 0;
 
@@ -98,26 +98,52 @@ namespace {
 		return result;
 	}
 
+	cv::Mat rotate(cv::Mat src, double angle)
+	{
+		cv::Mat dst;
+		cv::Point2f pt(src.cols / 2., src.rows / 2.);
+		cv::Mat r = getRotationMatrix2D(pt, angle, 1.0);
+		warpAffine(src, dst, r, cv::Size(src.cols, src.rows));
+		return dst;
+	}
+
 	std::list<cv::Mat> cropImages(cv::Mat image, rectangles_t squares)
 	{
 		std::list<cv::Mat> listCropImage;
 
 		const std::string name = "./pieces/piece";
-		const std::string extension = ".jpg";
+		const std::string extension = ".png";
 		for (size_t i = 0; i < squares.size(); i++)
 		{
-			cv::Rect rectangle = cv::boundingRect(cv::Mat(squares[i]));
-			cv::Mat subimage(image, rectangle);
+
+			// rect is the RotatedRect (I got it from a contour...)
+			cv::RotatedRect rect = cv::minAreaRect(cv::Mat(squares[i]));
+			// matrices we'll use
+			cv::Mat M, rotated, cropped;
+			// get angle and size from the bounding box
+			float angle = rect.angle;
+			cv::Size rect_size = rect.size;
+			// thanks to http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+			if (rect.angle < -45.) {
+				angle += 90.0;
+				std::swap(rect_size.width, rect_size.height);
+			}
+			// get the rotation matrix
+			M = getRotationMatrix2D(rect.center, angle, 1.0);
+			// perform the affine transformation
+			warpAffine(image, rotated, M, image.size(), cv::INTER_CUBIC);
+			// crop the resulting image
+			getRectSubPix(rotated, rect_size, rect.center, cropped);
+
 			std::string filename = name + std::to_string(i) + extension;
-			cv::imwrite(filename, subimage);
-			listCropImage.push_back(subimage);
-			//showImage(subimage);
-			//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
+			cv::imwrite(filename, cropped);
+			listCropImage.push_back(cropped);
 		}
+		//showImage(subimage);
+		//cout << "#" << i << " rectangle x:" << rectangle.x << " y:" << rectangle.y << " " << rectangle.width << "x" << rectangle.height << endl;
 
 		return listCropImage;
 	}
-
 }
 
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
