@@ -70,7 +70,7 @@ int main(const int argc, const char *argv[])
 		return -1;
 
 	#ifdef _DEBUG
-	cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("Display window", cv::WINDOW_NORMAL);
 	cv::imshow("Display window", outputImage);
 	cv::waitKey(0);
 	#endif
