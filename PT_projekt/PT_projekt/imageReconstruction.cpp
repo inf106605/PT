@@ -12,7 +12,7 @@
 bool reconstructImage(const cv::Mat &inputImage, cv::Mat &outputImage)
 {
 	const auto pieces = findPieces(inputImage);
-	const auto arrangedPieces = arrangePieces(pieces);
+	auto arrangedPieces = arrangePieces(pieces);
 	outputImage = mergePieces(arrangedPieces);
 	return true;
 }

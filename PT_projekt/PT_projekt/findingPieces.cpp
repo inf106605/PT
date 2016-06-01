@@ -134,9 +134,10 @@ namespace {
 			warpAffine(image, rotated, M, image.size(), cv::INTER_CUBIC);
 			// crop the resulting image
 			getRectSubPix(rotated, rect_size, rect.center, cropped);
-
+			/* // write image to folder
 			std::string filename = name + std::to_string(i) + extension;
 			cv::imwrite(filename, cropped);
+			*/
 			listCropImage.push_back(cropped);
 		}
 		//showImage(subimage);
