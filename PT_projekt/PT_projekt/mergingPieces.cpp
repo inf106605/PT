@@ -43,7 +43,7 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 
 	// zmienne do max wymiaru
 
-	int maxSizeCols, maxSizeRows = std::numeric_limits<int>::min();
+	int maxSizeCols = std::numeric_limits<int>::min(), maxSizeRows = std::numeric_limits<int>::min();
 
 	// wyszukiwanie najmiejszych wartoœci wspó³rzêdnych x, y oraz najwiêkszych rozmiarów kawa³ków
 
@@ -71,7 +71,8 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 			maxY = arrangedPieces[i].position.second;
 	}
 
-	std::cout << "X: " << maxX << "\tY: " << maxY << std::endl;
+	std::cout << "maxX: " << maxX << "\tmaxY: " << maxY << std::endl;
+	std::cout << "maxSizeCols: " << maxSizeCols << "\tmaxSizeRows: " << maxSizeRows << std::endl;
 	cv::Mat matrixOutput((maxY + 1) * maxSizeCols, (maxX + 1) * maxSizeRows, arrangedPieces[0].piece.type(), cvScalar(255, 255, 255));
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
