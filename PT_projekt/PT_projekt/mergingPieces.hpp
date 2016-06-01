@@ -7,4 +7,4 @@
 #include "arrangingPieces.hpp"
 
 
-cv::Mat mergePieces(std::vector<ArrangedPiece> &arrangedPieces);
+cv::Mat mergePieces(arrangedPieces_t &arrangedPieces);

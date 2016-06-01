@@ -2,6 +2,7 @@
 
 
 #include <list>
+#include <utility>
 #include <vector>
 
 #include <opencv2/core/core.hpp>
@@ -15,12 +16,16 @@ enum Rotation
 	R270
 };
 
+typedef std::pair<int, int> position_t;
+
 struct ArrangedPiece
 {
 	const cv::Mat * const piece;
 	Rotation rotation;
-	cv::Point position;
+	position_t position;
 };
 
+typedef std::vector<ArrangedPiece> arrangedPieces_t;
 
-std::vector<ArrangedPiece> arrangePieces(const std::list<cv::Mat> &pieces);
+
+arrangedPieces_t arrangePieces(const std::list<cv::Mat> &pieces);
