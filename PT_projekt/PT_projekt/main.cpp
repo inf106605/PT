@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <ctime>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -44,6 +45,8 @@ namespace {
 
 int main(const int argc, const char *argv[])
 {
+	srand((unsigned)time(nullptr));
+
 	const std::string programPath = argv[0];
 	if (argc >= 2 && (std::strcmp(argv[1], "--help") == 0))
 	{
