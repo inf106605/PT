@@ -20,7 +20,7 @@ typedef std::pair<int, int> position_t;
 
 struct ArrangedPiece
 {
-	const cv::Mat * const piece;
+	cv::Mat &piece;
 	Rotation rotation;
 	position_t position;
 };
@@ -28,4 +28,4 @@ struct ArrangedPiece
 typedef std::vector<ArrangedPiece> arrangedPieces_t;
 
 
-arrangedPieces_t arrangePieces(const std::list<cv::Mat> &pieces);
+arrangedPieces_t arrangePieces(std::list<cv::Mat> &pieces);

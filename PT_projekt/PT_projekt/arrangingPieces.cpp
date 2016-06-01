@@ -6,13 +6,13 @@
 
 namespace {
 
-	arrangedPieces_t createFirstSpecimen(const std::list<cv::Mat> &pieces)
+	arrangedPieces_t createFirstSpecimen(std::list<cv::Mat> &pieces)
 	{
 		arrangedPieces_t arrangedPieces;
 		arrangedPieces.reserve(pieces.size());
 		int x = 0;
-		for (const cv::Mat &piece : pieces)
-			arrangedPieces.push_back(ArrangedPiece{ &piece, Rotation::R0, position_t(++x, 0) });
+		for (cv::Mat &piece : pieces)
+			arrangedPieces.push_back(ArrangedPiece{ piece, Rotation::R0, position_t(++x, 0) });
 		return arrangedPieces;
 	}
 
@@ -213,7 +213,7 @@ namespace {
 
 }//
 
-std::vector<ArrangedPiece> arrangePieces(const std::list<cv::Mat> &pieces)
+std::vector<ArrangedPiece> arrangePieces(std::list<cv::Mat> &pieces)
 {
 	std::vector<ArrangedPiece> arrangedPieces = createFirstSpecimen(pieces);
 	doEvolution(arrangedPieces);
