@@ -101,7 +101,7 @@ namespace {
 	cv::Mat rotate(cv::Mat src, double angle)
 	{
 		cv::Mat dst;
-		cv::Point2f pt(src.cols / 2., src.rows / 2.);
+		cv::Point2f pt(src.cols / 2.f, src.rows / 2.f);
 		cv::Mat r = getRotationMatrix2D(pt, angle, 1.0);
 		warpAffine(src, dst, r, cv::Size(src.cols, src.rows));
 		return dst;
