@@ -190,6 +190,7 @@ namespace {
 			piecesInVectorMap_t piecesInVectorMapCopy = piecesInVectorMap;
 			mutate(arrangedPiecesCopy, piecesInVectorMapCopy, mutationCount);
 			double rating = calculateRating(arrangedPiecesCopy, piecesInVectorMapCopy);
+
 			if (lastRating < rating)
 			{
 				lastRating = rating;

@@ -1,5 +1,33 @@
 #include "mergingPieces.hpp"
 
+void rotate_90n(cv::Mat &piece, Rotation angle)
+{
+	switch (angle)
+	{
+		case Rotation::R0:
+			break;
+		case Rotation::R90:
+		{
+			cv::transpose(piece, piece);
+			cv::flip(piece, piece, 0);
+			break;
+		}
+	
+		case Rotation::R180:
+		{
+			cv::flip(piece, piece, -1);
+			break;
+		}
+
+		case Rotation::R270:
+		{
+			cv::transpose(piece, piece);
+			cv::flip(piece, piece, 1);
+			break;
+		}
+
+	}
+}
 
 cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 {
@@ -48,11 +76,15 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
+		/*
 		#ifdef _DEBUG
 		std::cout << "Element " << i << std::endl;
 		std::cout << "Position x: " << arrangedPieces[i].position.first << " " << "Position y: " << arrangedPieces[i].position.second << std::endl;
 		std::cout << "Position x * " << maxSizeCols  <<": " << arrangedPieces[i].position.first * maxSizeCols << " " << "Position y * " << maxSizeRows  << ": " << arrangedPieces[i].position.second * maxSizeRows << std::endl;
 		#endif
+		*/
+
+		rotate_90n(arrangedPieces[i].piece, arrangedPieces[i].rotation);
 
 		arrangedPieces[i].piece.copyTo(matrixOutput(cv::Rect(arrangedPieces[i].position.first * maxSizeCols, arrangedPieces[i].position.second * maxSizeRows, arrangedPieces[i].piece.cols, arrangedPieces[i].piece.rows)));
 	}
