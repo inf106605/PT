@@ -136,9 +136,11 @@ namespace {
 				auto founded = piecesInVectorMap.find(position);
 				if (founded == piecesInVectorMap.cend())
 				{
-					piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
+					position_t lastPosition = arrangedPiece1.position;
+					piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
 					arrangedPiece1.position = position;
 					piecesInVectorMap.emplace(position, i);
+
 				}
 				else
 				{
@@ -174,7 +176,7 @@ namespace {
 			mutate(arrangedPiecesCopy, piecesInVectorMapCopy, mutationCount);
 			double rating = calculateRating(arrangedPiecesCopy, piecesInVectorMapCopy);
 			#ifdef _DEBUG
-			//std::cout << "Imporvement: " << rating << " - " << lastRating << " = " << (rating - lastRating) << "\t(" << mutationCount << "/" << failedNumber << ")" << std::endl;
+			std::cout << "Imporvement: " << rating << " - " << lastRating << " = " << (rating - lastRating) << "\t(" << mutationCount << "/" << failedNumber << ")" << std::endl;
 			#endif
 			if (lastRating < rating)
 			{
@@ -187,7 +189,7 @@ namespace {
 			{
 				if (++failedNumber == maxFailedNumber)
 				{
-					maxFailedNumber *= 2;
+					maxFailedNumber = maxFailedNumber * 17 / 10;
 					if ((mutationCount /= 2) == 0)
 						break;
 					failedNumber = 0;
