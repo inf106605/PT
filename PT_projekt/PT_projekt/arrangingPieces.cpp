@@ -102,6 +102,18 @@ namespace {
 		return rating;
 	}
 
+	bool removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc, arrangedPieces_t &arrangedPieces)
+	{
+		const int searchedValue = searchedPosition.*roc;
+		for (const ArrangedPiece &arrangedPiece : arrangedPieces)
+			if (arrangedPiece.position.*roc == searchedValue)
+				return false;
+		for (ArrangedPiece &arrangedPiece : arrangedPieces)
+			if (arrangedPiece.position.*roc > searchedValue)
+				--(arrangedPiece.position.*roc);
+		return true;
+	}
+
 	void mutate(arrangedPieces_t &arrangedPieces, piecesInVectorMap_t &piecesInVectorMap, unsigned mutationCount)
 	{
 		for (; mutationCount != 0; --mutationCount)
@@ -140,7 +152,10 @@ namespace {
 					piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
 					arrangedPiece1.position = position;
 					piecesInVectorMap.emplace(position, i);
-
+					const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
+					const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
+					if (columnRemoved || rowRemoved)
+						piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
 				}
 				else
 				{
@@ -175,9 +190,6 @@ namespace {
 			piecesInVectorMap_t piecesInVectorMapCopy = piecesInVectorMap;
 			mutate(arrangedPiecesCopy, piecesInVectorMapCopy, mutationCount);
 			double rating = calculateRating(arrangedPiecesCopy, piecesInVectorMapCopy);
-			#ifdef _DEBUG
-			std::cout << "Imporvement: " << rating << " - " << lastRating << " = " << (rating - lastRating) << "\t(" << mutationCount << "/" << failedNumber << ")" << std::endl;
-			#endif
 			if (lastRating < rating)
 			{
 				lastRating = rating;

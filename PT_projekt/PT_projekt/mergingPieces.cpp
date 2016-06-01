@@ -43,7 +43,8 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 			maxY = arrangedPieces[i].position.second;
 	}
 
-	cv::Mat matrixOutput((maxY+1) * maxSizeCols, (maxX+1) * maxSizeRows, arrangedPieces[0].piece->type(),cvScalar(255,255,255));
+	std::cout << "X: " << maxX << "\tY: " << maxY << std::endl;
+	cv::Mat matrixOutput((maxY + 1) * maxSizeCols, (maxX + 1) * maxSizeRows, arrangedPieces[0].piece->type(), cvScalar(255, 255, 255));
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
