@@ -47,8 +47,9 @@ cv::Mat mergePieces(std::vector<ArrangedPiece> &arrangedPieces)
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
+		std::cout << "Element " << i << std::endl;
 		std::cout << "Position x: " << arrangedPieces[i].position.x << " " << "Position y: " << arrangedPieces[i].position.y << std::endl;
-		std::cout << "Position x * 70: " << arrangedPieces[i].position.x * maxSizeCols << " " << "Position y: " << arrangedPieces[i].position.y * 70 << std::endl;
+		std::cout << "Position x * " << maxSizeCols  <<": " << arrangedPieces[i].position.x * maxSizeCols << " " << "Position y * " << maxSizeRows  << ": " << arrangedPieces[i].position.y * maxSizeRows << std::endl;
 
 		arrangedPieces[i].piece->copyTo(matrixOutput(cv::Rect(arrangedPieces[i].position.x * maxSizeCols,arrangedPieces[i].position.y * maxSizeRows,arrangedPieces[i].piece->cols,arrangedPieces[i].piece->rows)));
 	}
