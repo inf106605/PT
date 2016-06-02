@@ -29,67 +29,131 @@ void rotate_90n(cv::Mat &piece, Rotation angle)
 	}
 }
 
-cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
+void rotateArrangedPieces(arrangedPieces_t &arrangedPieces)
 {
-	//TODO
-	// zmienne do przechowywania  najmniejszych wartoœci wspó³rzêdnych x,y
+	for (size_t i = 0; i < arrangedPieces.size(); i++)
+	{
+		rotate_90n(arrangedPieces[i].piece, arrangedPieces[i].rotation);
+	}
+}
+
+int searchMinX(arrangedPieces_t &arrangedPieces)
+{
 	int minX = std::numeric_limits<int>::max();
-	int minY = std::numeric_limits<int>::max();
-
-	// zmienne do przechowywania  najwiekszych wartoœci wspó³rzednych x,y
-
-	int maxX = std::numeric_limits<int>::min();
-	int maxY = std::numeric_limits<int>::min();
-
-	// zmienne do max wymiaru
-
-	int maxSizeCols = std::numeric_limits<int>::min(), maxSizeRows = std::numeric_limits<int>::min();
-
-	// wyszukiwanie najmiejszych wartoœci wspó³rzêdnych x, y oraz najwiêkszych rozmiarów kawa³ków
 
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
-		maxSizeCols = std::max(maxSizeCols, arrangedPieces[i].piece.cols);
-		maxSizeRows = std::max(maxSizeRows, arrangedPieces[i].piece.rows);
-
 		if (arrangedPieces[i].position.first < minX)
 			minX = arrangedPieces[i].position.first;
+	}
+
+	return minX;
+}
+
+int searchMinY(arrangedPieces_t &arrangedPieces)
+{
+
+	int minY = std::numeric_limits<int>::max();
+
+	for (size_t i = 0; i < arrangedPieces.size(); i++)
+	{
 		if (arrangedPieces[i].position.second < minY)
 			minY = arrangedPieces[i].position.second;
 	}
 
-	maxSizeRows = maxSizeCols = std::max(maxSizeRows, maxSizeCols);
+	return minY;
+}
 
+int CountCols(arrangedPieces_t &arrangedPieces)
+{
+	int maxX = std::numeric_limits<int>::min();
+
+	for (size_t i = 0; i < arrangedPieces.size(); i++)
+	{
+
+		if (arrangedPieces[i].position.first > maxX)
+			maxX = arrangedPieces[i].position.first;
+	}
+
+	return maxX + 1;
+}
+
+int CountRows(arrangedPieces_t &arrangedPieces)
+{
+	int maxY = std::numeric_limits<int>::min();
+
+	for (size_t i = 0; i < arrangedPieces.size(); i++)
+	{
+		if (arrangedPieces[i].position.second > maxY)
+			maxY = arrangedPieces[i].position.second;
+	}
+	return maxY + 1;
+}
+
+void substractionMinXAndMinY(arrangedPieces_t &arrangedPieces, int minX, int minY)
+{
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
 		arrangedPieces[i].position.first -= minX;
 		arrangedPieces[i].position.second -= minY;
+	}
+}
 
-		if (arrangedPieces[i].position.first > maxX)
-			maxX = arrangedPieces[i].position.first;
-		if (arrangedPieces[i].position.second > maxY)
-			maxY = arrangedPieces[i].position.second;
+cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
+{
+	// obracanie obrazka o zadany k¹t
+	rotateArrangedPieces(arrangedPieces);
+
+	// szukanie min X i min Y
+	int minX = searchMinX(arrangedPieces);
+	int minY = searchMinY(arrangedPieces);
+
+	// odejmowanie wartoœci wspó³rzêdnych arrangedPices z minX oraz minY
+	substractionMinXAndMinY(arrangedPieces,minX,minY);
+
+	// obliczyæ wartoœci ka¿dej kolumny i ka¿dego wiersza
+
+	std::vector<int> sizeEveryCols;
+	std::vector<int> sizeEveryRows;
+
+	// maksymalne wartoœci kolumn oraz wierszy
+
+	const int ColsCount = CountCols(arrangedPieces);
+	const int RowsCount = CountRows(arrangedPieces);
+
+	sizeEveryCols.resize(ColsCount, 0);
+	sizeEveryRows.resize(RowsCount, 0);
+
+	for (const ArrangedPiece &i : arrangedPieces)
+	{
+		const int columnNumber = i.position.first; // kolumna 
+		const int width = i.piece.cols;
+
+		const int rowsNumber = i.position.second;
+		const int height = i.piece.rows;
+
+		sizeEveryCols[columnNumber] = std::max(width, sizeEveryCols[columnNumber]);
+		sizeEveryRows[rowsNumber] = std::max(height, sizeEveryRows[rowsNumber]);
 	}
 
-	std::cout << "maxX: " << maxX << "\tmaxY: " << maxY << std::endl;
-	std::cout << "maxSizeCols: " << maxSizeCols << "\tmaxSizeRows: " << maxSizeRows << std::endl;
-	cv::Mat matrixOutput((maxY + 1) * maxSizeCols, (maxX + 1) * maxSizeRows, arrangedPieces[0].piece.type(), cvScalar(255, 255, 255));
+	std::cout << "maxX: " << ColsCount << "\tmaxY: " << RowsCount << std::endl;
+	
+	sizeEveryCols.insert(sizeEveryCols.begin(), 0);
+	for (size_t i = 1; i < sizeEveryCols.size(); i++)
+		sizeEveryCols[i] += sizeEveryCols[i - 1];
+
+	sizeEveryRows.insert(sizeEveryRows.begin(), 0);
+	for (size_t i = 1; i < sizeEveryRows.size(); i++)
+		sizeEveryRows[i] += sizeEveryRows[i - 1];
+
+	cv::Mat matrixOutput(sizeEveryRows.back(), sizeEveryCols.back(), arrangedPieces[0].piece.type(), cvScalar(255, 255, 255));
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
-		/*
-		#ifdef _DEBUG
-		std::cout << "Element " << i << std::endl;
-		std::cout << "Position x: " << arrangedPieces[i].position.first << " " << "Position y: " << arrangedPieces[i].position.second << std::endl;
-		std::cout << "Position x * " << maxSizeCols  <<": " << arrangedPieces[i].position.first * maxSizeCols << " " << "Position y * " << maxSizeRows  << ": " << arrangedPieces[i].position.second * maxSizeRows << std::endl;
-		#endif
-		*/
-
-		rotate_90n(arrangedPieces[i].piece, arrangedPieces[i].rotation);
-
-		arrangedPieces[i].piece.copyTo(matrixOutput(cv::Rect(arrangedPieces[i].position.first * maxSizeCols, arrangedPieces[i].position.second * maxSizeRows, arrangedPieces[i].piece.cols, arrangedPieces[i].piece.rows)));
+		
+		const cv::Rect rectangle(sizeEveryCols[arrangedPieces[i].position.first], sizeEveryRows[arrangedPieces[i].position.second], arrangedPieces[i].piece.cols, arrangedPieces[i].piece.rows);
+		arrangedPieces[i].piece.copyTo(matrixOutput(rectangle));
 	}
 
-	//return arrangedPieces.front().piece->clone();
 	return matrixOutput;
 }
