@@ -166,7 +166,7 @@ namespace {
 	double compareColors(const Sampler &sampler1, const Sampler &sampler2)
 	{
 		const unsigned minLength = std::min(sampler1.getLength(), sampler2.getLength());
-		const unsigned samplesNumber = (int)(std::log((double)minLength) * 10);
+		const unsigned samplesNumber = (int)(minLength / (std::log((double)minLength) * 10));
 		const double stepSize = 1.0 / samplesNumber;
 		double result = 0.0;
 		double currentPosition = stepSize * 0.5;
@@ -174,8 +174,8 @@ namespace {
 		{
 			const cv::Vec3b& color1 = sampler1.get(currentPosition);
 			const cv::Vec3b& color2 = sampler2.get(currentPosition);
-			const int colorDiff = std::abs((int)color1[0] - (int)color2[0]) + std::abs((int)color1[1] - (int)color2[1]) + std::abs((int)color1[2] - (int)color2[2]);
-			const double colorRating = ((255 * 3 / 2) - colorDiff) / (double)(255 * 3 / 2) * stepSize;
+			const int colorDiff = std::max({std::abs((int)color1[0] - (int)color2[0]), std::abs((int)color1[1] - (int)color2[1]), std::abs((int)color1[2] - (int)color2[2])});
+			const double colorRating = ((255 / 2) - colorDiff) / (double)(255 / 2) * stepSize;
 			result += colorRating;
 		}
 		return result;
@@ -232,7 +232,7 @@ namespace {
 
 	double calculateRating(const arrangedPieces_t &arrangedPieces, const piecesInVectorMap_t &piecesInVectorMap)
 	{
-		static const double LENGHT_PENALTY_WEIGHT = 100.0;
+		static const double LENGHT_PENALTY_WEIGHT = arrangedPieces.size() * 2;
 		const double lengthPenalty = calculateLengthPenalty(piecesInVectorMap) * LENGHT_PENALTY_WEIGHT;
 		const double mathRating = calculateMatchRating(arrangedPieces, piecesInVectorMap);
 		const double rating = mathRating - lengthPenalty;
@@ -261,7 +261,7 @@ namespace {
 			{
 				arrangedPiece1.rotation = (Rotation)(rand() % 4);
 			}
-			else
+			if (rand() % 2 == 0)
 			{
 				size_t j = rand() % (arrangedPieces.size() - 1);
 				if (j >= i)
@@ -312,9 +312,9 @@ namespace {
 	void doEvolution(arrangedPieces_t &arrangedPieces)
 	{
 		#ifdef _DEBUG
-		unsigned maxFailedNumber = 2;
+		unsigned maxFailedNumber = 1;
 		#else
-		unsigned maxFailedNumber = 64;
+		unsigned maxFailedNumber = 32;
 		#endif
 		unsigned mutationCount = 4096;
 		unsigned failedNumber = 0;
@@ -339,9 +339,12 @@ namespace {
 			{
 				if (++failedNumber == maxFailedNumber)
 				{
-					maxFailedNumber = maxFailedNumber * 17 / 10;
 					if ((mutationCount /= 2) == 0)
 						break;
+					if (mutationCount < 2)
+						maxFailedNumber = maxFailedNumber * 4;
+					else
+						maxFailedNumber = maxFailedNumber * 2;
 					failedNumber = 0;
 				}
 			}
