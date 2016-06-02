@@ -69,7 +69,7 @@ int main(const int argc, const char *argv[])
 	if (!reconstructImage(inputImage, outputImage))
 		return -1;
 
-	#ifdef _DEBUG
+	#if defined _DEBUG || defined _DEVEL
 	cv::namedWindow("Display window", cv::WINDOW_NORMAL);
 	cv::imshow("Display window", outputImage);
 	cv::waitKey(0);
