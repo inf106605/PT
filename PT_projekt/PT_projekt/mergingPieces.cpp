@@ -89,6 +89,5 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 		arrangedPieces[i].piece.copyTo(matrixOutput(cv::Rect(arrangedPieces[i].position.first * maxSizeCols, arrangedPieces[i].position.second * maxSizeRows, arrangedPieces[i].piece.cols, arrangedPieces[i].piece.rows)));
 	}
 
-	//return arrangedPieces.front().piece->clone();
 	return matrixOutput;
 }
