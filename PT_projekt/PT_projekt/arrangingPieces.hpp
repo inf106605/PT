@@ -10,10 +10,10 @@
 
 enum Rotation
 {
-	R0,
-	R90,
-	R180,
-	R270
+	R0 = 0,
+	R90 = 1,
+	R180 = 2,
+	R270 = 3
 };
 
 typedef std::pair<int, int> position_t;

@@ -1,5 +1,6 @@
 #include "arrangingPieces.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 
@@ -28,7 +29,6 @@ namespace {
 
 	double calculateLengthPenalty(const piecesInVectorMap_t &piecesInVectorMap)
 	{
-		const double MULTIPLER = 100.0;
 		int minX = std::numeric_limits<int>::max();
 		int maxX = std::numeric_limits<int>::min();
 		int minY = std::numeric_limits<int>::max();
@@ -46,12 +46,67 @@ namespace {
 				maxY = position.second;
 		}
 		const int maxLength = std::max(maxX - minX, maxY - minY);
-		const double lengthPenalty = std::log((double)maxLength) * MULTIPLER;
+		const double lengthPenalty = std::log((double)maxLength);
 		return lengthPenalty;
+	}
+
+	class Sampler
+	{
+	public:
+		enum Side { UP = 0, LEFT = 1, DOWN = 2, RIGHT = 3 };
+		Sampler(const cv::Mat &image, const Side side) : image(image), side(side) {}
+		~Sampler() = default;
+		Sampler(const Sampler &) = delete;
+		Sampler& operator=(const Sampler &) = delete;
+		int length() const { if (side == Side::UP || side == Side::DOWN) return image.cols; else return image.rows; }
+		//TODO get(double percent)
+		static Side reverseSide(Side side) { return (Side)((side + 2) % 4); }
+	private:
+		const cv::Mat &image;
+		const Side side;
+	};
+
+	Sampler generateSampler(const ArrangedPiece &arrangedPiece1, const ArrangedPiece &arrangedPiece2, const bool first)
+	{
+		Sampler::Side side;
+		if (arrangedPiece1.position.first != arrangedPiece2.position.first)
+		{
+			if (arrangedPiece1.position.first > arrangedPiece2.position.first)
+				side = Sampler::Side::LEFT;
+			else
+				side = Sampler::Side::RIGHT;
+		}
+		else
+		{
+			if (arrangedPiece1.position.second > arrangedPiece2.position.second)
+				side = Sampler::Side::DOWN;
+			else
+				side = Sampler::Side::UP;
+		}
+		if (!first)
+			side = Sampler::reverseSide(side);
+		const ArrangedPiece arrangedPiece = first ? arrangedPiece1 : arrangedPiece2;
+		side = (Sampler::Side)((side + arrangedPiece.rotation) % 4);
+		// The code below is marked as an error by the Visual Studio but it is correct.
+		// The compiler will not use the deleted copy constructor due to the return value optimization.
+		return Sampler(arrangedPiece.piece, side);
+	}
+
+	bool lenghtsAreSimilar(int length1, int length2)
+	{
+		if (length1 > length2)
+			std::swap(length1, length2);
+		return length1 * 10 / 9 >= length2;
 	}
 
 	double calculateMatchRating(const ArrangedPiece &arrangedPiece1, const ArrangedPiece &arrangedPiece2)
 	{
+		// The code below is marked as an error by the Visual Studio but it is correct.
+		// The compiler will not use the deleted copy constructor due to the copy elision optimization.
+		const Sampler sampler1 = generateSampler(arrangedPiece1, arrangedPiece2, true);
+		const Sampler sampler2 = generateSampler(arrangedPiece1, arrangedPiece2, false);
+		if (!lenghtsAreSimilar(sampler1.length(), sampler2.length()))
+			return -1.0;
 		//TODO
 		return 0.0;
 	}
@@ -96,7 +151,8 @@ namespace {
 
 	double calculateRating(const arrangedPieces_t &arrangedPieces, const piecesInVectorMap_t &piecesInVectorMap)
 	{
-		const double lengthPenalty = calculateLengthPenalty(piecesInVectorMap);
+		static const double LENGHT_PENALTY_WEIGHT = 100.0;
+		const double lengthPenalty = calculateLengthPenalty(piecesInVectorMap) * LENGHT_PENALTY_WEIGHT;
 		const double mathRating = calculateMatchRating(arrangedPieces, piecesInVectorMap);
 		const double rating = mathRating - lengthPenalty;
 		return rating;
