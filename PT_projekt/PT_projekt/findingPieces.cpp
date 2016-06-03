@@ -149,6 +149,7 @@ namespace {
 
 std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
 {
+	std::cout << "Finding pieces of the document in the input image..." << std::endl;
 	rectangles_t rectangles = findSquares(inputImage);
 	rectangles = filterOutOverlappingRectangles(rectangles);
 	std::list<cv::Mat> result = cropImages(inputImage, rectangles);

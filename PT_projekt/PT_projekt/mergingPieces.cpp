@@ -101,6 +101,8 @@ void substractionMinXAndMinY(arrangedPieces_t &arrangedPieces, int minX, int min
 
 cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 {
+	std::cout << "Merging pieces into a single output image..." << std::endl;
+
 	// obracanie obrazka o zadany k¹t
 	rotateArrangedPieces(arrangedPieces);
 
@@ -135,8 +137,6 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 		sizeEveryCols[columnNumber] = std::max(width, sizeEveryCols[columnNumber]);
 		sizeEveryRows[rowsNumber] = std::max(height, sizeEveryRows[rowsNumber]);
 	}
-
-	std::cout << "maxX: " << ColsCount << "\tmaxY: " << RowsCount << std::endl;
 	
 	sizeEveryCols.insert(sizeEveryCols.begin(), 0);
 	for (size_t i = 1; i < sizeEveryCols.size(); i++)
