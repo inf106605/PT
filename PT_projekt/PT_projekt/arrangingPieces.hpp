@@ -23,6 +23,9 @@ struct ArrangedPiece
 	cv::Mat &piece;
 	Rotation rotation;
 	position_t position;
+
+	ArrangedPiece(const ArrangedPiece &) = default;
+	ArrangedPiece& operator=(const ArrangedPiece &) = default;
 };
 
 typedef std::vector<ArrangedPiece> arrangedPieces_t;

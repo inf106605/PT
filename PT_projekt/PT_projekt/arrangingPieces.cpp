@@ -9,28 +9,21 @@
 
 namespace {
 
-	arrangedPieces_t createRandomSpecimen(std::list<cv::Mat> &pieces)
-	{
-		int maxValuePlusOne = (size_t)(std::sqrt(pieces.size())) + 2;
-		int minValue = -maxValuePlusOne / 2;
-		maxValuePlusOne += minValue;
-		std::deque<position_t> remainingPositions;
-		for (int i = minValue; i != maxValuePlusOne; ++i)
-			for (int j = minValue; j != maxValuePlusOne; ++j)
-				remainingPositions.push_back(position_t(i, j));
-		arrangedPieces_t arrangedPieces;
-		arrangedPieces.reserve(pieces.size());
-		for (cv::Mat &piece : pieces)
-		{
-			const size_t i = rand() % remainingPositions.size();
-			const auto iterator = remainingPositions.begin() + i;
-			arrangedPieces.push_back(ArrangedPiece{ piece, (Rotation)(rand()%4), *iterator });
-			remainingPositions.erase(iterator);
-		}
-		return arrangedPieces;
-	}
-
 	typedef std::map<position_t, size_t> piecesInVectorMap_t;
+
+	struct Indyvidual
+	{
+		std::vector<ArrangedPiece> arrangedPieces;
+		piecesInVectorMap_t piecesInVectorMap;
+		double rating;
+
+		Indyvidual() = default;
+		~Indyvidual() = default;
+		Indyvidual(const Indyvidual &) = default;
+		Indyvidual& operator=(const Indyvidual &) = default;
+		Indyvidual(Indyvidual &&indyvidual) : arrangedPieces(std::move(indyvidual.arrangedPieces)), piecesInVectorMap(std::move(indyvidual.piecesInVectorMap)), rating(indyvidual.rating) {}
+		Indyvidual& operator=(Indyvidual &&indyvidual) { arrangedPieces = std::move(indyvidual.arrangedPieces); piecesInVectorMap = std::move(indyvidual.piecesInVectorMap); rating = indyvidual.rating; return *this; }
+	};
 
 	piecesInVectorMap_t createPiecesInVectorMap(const arrangedPieces_t &arrangedPieces)
 	{
@@ -215,8 +208,11 @@ namespace {
 		return compareColors(sampler1, sampler2);
 	}
 
-	double calculateMatchRating(const arrangedPieces_t &arrangedPieces, const piecesInVectorMap_t &piecesInVectorMap)
+	double calculateMatchRating(const Indyvidual &indyvidual)
 	{
+		const std::vector<ArrangedPiece> &arrangedPieces = indyvidual.arrangedPieces;
+		const piecesInVectorMap_t &piecesInVectorMap = indyvidual.piecesInVectorMap;
+
 		const double NO_NEIGHBOR_PENALTY = 0.1;
 		double matchRating = 0.0;
 		for (const ArrangedPiece &arrangedPiece1 : arrangedPieces)
@@ -253,13 +249,35 @@ namespace {
 		return matchRating;
 	}
 
-	double calculateRating(const arrangedPieces_t &arrangedPieces, const piecesInVectorMap_t &piecesInVectorMap)
+	void calculateRating(Indyvidual &indyvidual)
 	{
-		static const double LENGHT_PENALTY_WEIGHT = arrangedPieces.size() * 2;
-		const double lengthPenalty = calculateLengthPenalty(piecesInVectorMap) * LENGHT_PENALTY_WEIGHT;
-		const double mathRating = calculateMatchRating(arrangedPieces, piecesInVectorMap);
-		const double rating = mathRating - lengthPenalty;
-		return rating;
+		static const double LENGHT_PENALTY_WEIGHT = indyvidual.arrangedPieces.size() * 2;
+		const double lengthPenalty = calculateLengthPenalty(indyvidual.piecesInVectorMap) * LENGHT_PENALTY_WEIGHT;
+		const double mathRating = calculateMatchRating(indyvidual);
+		indyvidual.rating = mathRating - lengthPenalty;
+	}
+
+	Indyvidual createRandomIndyvidual(std::list<cv::Mat> &pieces)
+	{
+		int maxValuePlusOne = (size_t)(std::sqrt(pieces.size())) + 2;
+		int minValue = -maxValuePlusOne / 2;
+		maxValuePlusOne += minValue;
+		std::deque<position_t> remainingPositions;
+		for (int i = minValue; i != maxValuePlusOne; ++i)
+		for (int j = minValue; j != maxValuePlusOne; ++j)
+			remainingPositions.push_back(position_t(i, j));
+		Indyvidual indyvidual;
+		indyvidual.arrangedPieces.reserve(pieces.size());
+		for (cv::Mat &piece : pieces)
+		{
+			const size_t i = rand() % remainingPositions.size();
+			const auto iterator = remainingPositions.begin() + i;
+			indyvidual.arrangedPieces.push_back(ArrangedPiece{ piece, (Rotation)(rand() % 4), *iterator });
+			remainingPositions.erase(iterator);
+		}
+		indyvidual.piecesInVectorMap = createPiecesInVectorMap(indyvidual.arrangedPieces);
+		calculateRating(indyvidual);
+		return indyvidual;
 	}
 
 	bool removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc, arrangedPieces_t &arrangedPieces)
@@ -279,9 +297,9 @@ namespace {
 		arrangedPiece.rotation = (Rotation)(rand() % 4);
 	}
 
-	void movePiece(arrangedPieces_t &arrangedPieces, piecesInVectorMap_t &piecesInVectorMap, ArrangedPiece &arrangedPiece1, size_t i)
+	void movePiece(Indyvidual &indyvidual, ArrangedPiece &arrangedPiece1, size_t i)
 	{
-		size_t j = rand() % (arrangedPieces.size() - 1);
+		size_t j = rand() % (indyvidual.arrangedPieces.size() - 1);
 		if (j >= i)
 			++j;
 		position_t position = arrangedPiece1.position;
@@ -300,46 +318,47 @@ namespace {
 			++position.second;
 			break;
 		}
-		auto founded = piecesInVectorMap.find(position);
-		if (founded == piecesInVectorMap.cend())
+		auto founded = indyvidual.piecesInVectorMap.find(position);
+		if (founded == indyvidual.piecesInVectorMap.cend())
 		{
 			position_t lastPosition = arrangedPiece1.position;
-			piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
+			indyvidual.piecesInVectorMap.erase(indyvidual.piecesInVectorMap.find(lastPosition));
 			arrangedPiece1.position = position;
-			piecesInVectorMap.emplace(position, i);
-			const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
-			const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
+			indyvidual.piecesInVectorMap.emplace(position, i);
+			const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, indyvidual.arrangedPieces);
+			const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, indyvidual.arrangedPieces);
 			if (columnRemoved || rowRemoved)
-				piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
+				indyvidual.piecesInVectorMap = createPiecesInVectorMap(indyvidual.arrangedPieces);
 		}
 		else
 		{
 			j = founded->second;
-			ArrangedPiece &arrangedPiece2 = arrangedPieces[j];
-			piecesInVectorMap.erase(founded);
-			piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
+			ArrangedPiece &arrangedPiece2 = indyvidual.arrangedPieces[j];
+			indyvidual.piecesInVectorMap.erase(founded);
+			indyvidual.piecesInVectorMap.erase(indyvidual.piecesInVectorMap.find(arrangedPiece1.position));
 			arrangedPiece2.position = arrangedPiece1.position;
 			arrangedPiece1.position = position;
-			piecesInVectorMap.emplace(arrangedPiece1.position, i);
-			piecesInVectorMap.emplace(arrangedPiece2.position, j);
+			indyvidual.piecesInVectorMap.emplace(arrangedPiece1.position, i);
+			indyvidual.piecesInVectorMap.emplace(arrangedPiece2.position, j);
 		}
 	}
 
-	void mutate(arrangedPieces_t &arrangedPieces, piecesInVectorMap_t &piecesInVectorMap, unsigned mutationCount)
+	void mutate(Indyvidual &indyvidual, unsigned mutationCount)
 	{
 		for (; mutationCount != 0; --mutationCount)
 		{
-			const size_t i = rand() % arrangedPieces.size();
-			ArrangedPiece &arrangedPiece = arrangedPieces[i];
+			const size_t i = rand() % indyvidual.arrangedPieces.size();
+			ArrangedPiece &arrangedPiece = indyvidual.arrangedPieces[i];
 
 			rotatePiece(arrangedPiece);
 
-			movePiece(arrangedPieces, piecesInVectorMap, arrangedPiece, i);
+			movePiece(indyvidual, arrangedPiece, i);
 		}
 	}
 
-	void doEvolution(arrangedPieces_t &arrangedPieces)
+	Indyvidual doEvolution(std::list<cv::Mat> &pieces)
 	{
+		Indyvidual indyvidual = createRandomIndyvidual(pieces);
 		#ifdef _DEBUG
 		unsigned maxFailedNumber = 2;
 		#else
@@ -347,21 +366,15 @@ namespace {
 		#endif
 		unsigned mutationCount = 128;
 		unsigned failedNumber = 0;
-		piecesInVectorMap_t piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
-		double lastRating = calculateRating(arrangedPieces, piecesInVectorMap);
-		std::cout << "\tInitial rating: " << lastRating << std::endl;
 		while (true)
 		{
-			arrangedPieces_t arrangedPiecesCopy = arrangedPieces;
-			piecesInVectorMap_t piecesInVectorMapCopy = piecesInVectorMap;
-			mutate(arrangedPiecesCopy, piecesInVectorMapCopy, mutationCount);
-			double rating = calculateRating(arrangedPiecesCopy, piecesInVectorMapCopy);
+			Indyvidual indyvidualCopy = indyvidual;
+			mutate(indyvidualCopy, mutationCount);
+			calculateRating(indyvidualCopy);
 
-			if (lastRating < rating)
+			if (indyvidual.rating < indyvidualCopy.rating)
 			{
-				lastRating = rating;
-				arrangedPieces = std::move(arrangedPiecesCopy);
-				piecesInVectorMap = std::move(piecesInVectorMapCopy);
+				indyvidual = std::move(indyvidualCopy);
 				failedNumber = 0;
 			}
 			else
@@ -380,7 +393,7 @@ namespace {
 				}
 			}
 		}
-		std::cout << "\tFinal rating: " << lastRating << std::endl;
+		return indyvidual;
 	}
 
 }//
@@ -388,7 +401,7 @@ namespace {
 std::vector<ArrangedPiece> arrangePieces(std::list<cv::Mat> &pieces)
 {
 	std::cout << "Arranging pieces..." << std::endl;
-	std::vector<ArrangedPiece> arrangedPieces = createRandomSpecimen(pieces);
-	doEvolution(arrangedPieces);
-	return arrangedPieces;
+	//std::vector<ArrangedPiece> arrangedPieces = createRandomSpecimen(pieces);
+	Indyvidual indyvidual = doEvolution(pieces);
+	return indyvidual.arrangedPieces;
 }
