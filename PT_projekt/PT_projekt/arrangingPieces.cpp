@@ -1,5 +1,6 @@
 #include "arrangingPieces.hpp"
 
+#include <cstdint>
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -80,20 +81,20 @@ namespace {
 		length(getLength(image, side))
 	{
 		{
-			const unsigned widthMinusOne = getLength(image, (Side)((side + 1) % 4)) - 1;
+			const unsigned widthMinusTwo = getLength(image, (Side)((side + 1) % 4)) - 2;
 			switch (side)
 			{
 			case Side::UP:
-				startPoint.y = widthMinusOne;
+				startPoint.y = widthMinusTwo;
 				break;
 			case Side::LEFT:
-				startPoint.x = 0;
+				startPoint.x = 1;
 				break;
 			case Side::DOWN:
-				startPoint.y = 0;
+				startPoint.y = 1;
 				break;
 			case Side::RIGHT:
-				startPoint.x = widthMinusOne;
+				startPoint.x = widthMinusTwo;
 				break;
 			}
 		}
@@ -166,7 +167,7 @@ namespace {
 	double compareColors(const Sampler &sampler1, const Sampler &sampler2)
 	{
 		const unsigned minLength = std::min(sampler1.getLength(), sampler2.getLength());
-		const unsigned samplesNumber = (int)(minLength / (std::log((double)minLength) * 10));
+		const unsigned samplesNumber = (int)(minLength / (std::log((double)minLength)));
 		const double stepSize = 1.0 / samplesNumber;
 		double result = 0.0;
 		double currentPosition = stepSize * 0.5;
@@ -174,9 +175,19 @@ namespace {
 		{
 			const cv::Vec3b& color1 = sampler1.get(currentPosition);
 			const cv::Vec3b& color2 = sampler2.get(currentPosition);
-			const int colorDiff = std::max({std::abs((int)color1[0] - (int)color2[0]), std::abs((int)color1[1] - (int)color2[1]), std::abs((int)color1[2] - (int)color2[2])});
-			const double colorRating = ((255 / 2) - colorDiff) / (double)(255 / 2) * stepSize;
+			const std::int_fast16_t colorDiff = std::max({ std::abs((std::int_fast16_t)color1[0] - (std::int_fast16_t)color2[0]),
+					std::abs((std::int_fast16_t)color1[1] - (std::int_fast16_t)color2[1]),
+					std::abs((std::int_fast16_t)color1[2] - (std::int_fast16_t)color2[2]) });
+			const double colorRating = ((255 / 2) - colorDiff) / (double)(255 / 2);
 			result += colorRating;
+		}
+		if (result <= 0.0)
+			result = 0.0;
+		else
+		{
+			result *= stepSize;
+			if (result > 0.7)
+				result = 2.0;
 		}
 		return result;
 	}
@@ -257,54 +268,50 @@ namespace {
 		{
 			const size_t i = rand() % arrangedPieces.size();
 			ArrangedPiece &arrangedPiece1 = arrangedPieces[i];
-			if (rand() % 2 == 0)
+
+			arrangedPiece1.rotation = (Rotation)(rand() % 4);
+
+			size_t j = rand() % (arrangedPieces.size() - 1);
+			if (j >= i)
+				++j;
+			position_t position = arrangedPiece1.position;
+			switch (rand() % 4)
 			{
-				arrangedPiece1.rotation = (Rotation)(rand() % 4);
+			case 0:
+				--position.first;
+				break;
+			case 1:
+				++position.first;
+				break;
+			case 2:
+				--position.second;
+				break;
+			case 3:
+				++position.second;
+				break;
 			}
-			if (rand() % 2 == 0)
+			auto founded = piecesInVectorMap.find(position);
+			if (founded == piecesInVectorMap.cend())
 			{
-				size_t j = rand() % (arrangedPieces.size() - 1);
-				if (j >= i)
-					++j;
-				position_t position = arrangedPiece1.position;
-				switch (rand() % 4)
-				{
-				case 0:
-					--position.first;
-					break;
-				case 1:
-					++position.first;
-					break;
-				case 2:
-					--position.second;
-					break;
-				case 3:
-					++position.second;
-					break;
-				}
-				auto founded = piecesInVectorMap.find(position);
-				if (founded == piecesInVectorMap.cend())
-				{
-					position_t lastPosition = arrangedPiece1.position;
-					piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
-					arrangedPiece1.position = position;
-					piecesInVectorMap.emplace(position, i);
-					const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
-					const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
-					if (columnRemoved || rowRemoved)
-						piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
-				}
-				else
-				{
-					j = founded->second;
-					ArrangedPiece &arrangedPiece2 = arrangedPieces[j];
-					piecesInVectorMap.erase(founded);
-					piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
-					arrangedPiece2.position = arrangedPiece1.position;
-					arrangedPiece1.position = position;
-					piecesInVectorMap.emplace(arrangedPiece1.position, i);
-					piecesInVectorMap.emplace(arrangedPiece2.position, j);
-				}
+				position_t lastPosition = arrangedPiece1.position;
+				piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
+				arrangedPiece1.position = position;
+				piecesInVectorMap.emplace(position, i);
+				const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
+				const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
+				if (columnRemoved || rowRemoved)
+					piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
+			}
+			else
+			{
+				j = founded->second;
+				ArrangedPiece &arrangedPiece2 = arrangedPieces[j];
+				piecesInVectorMap.erase(founded);
+				piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
+				arrangedPiece2.position = arrangedPiece1.position;
+				arrangedPiece1.position = position;
+				piecesInVectorMap.emplace(arrangedPiece1.position, i);
+				piecesInVectorMap.emplace(arrangedPiece2.position, j);
 			}
 		}
 	}
@@ -312,11 +319,11 @@ namespace {
 	void doEvolution(arrangedPieces_t &arrangedPieces)
 	{
 		#ifdef _DEBUG
-		unsigned maxFailedNumber = 1;
+		unsigned maxFailedNumber = 2;
 		#else
-		unsigned maxFailedNumber = 32;
+		unsigned maxFailedNumber = 128;
 		#endif
-		unsigned mutationCount = 4096;
+		unsigned mutationCount = 512;
 		unsigned failedNumber = 0;
 		piecesInVectorMap_t piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
 		double lastRating = calculateRating(arrangedPieces, piecesInVectorMap);
@@ -341,10 +348,12 @@ namespace {
 				{
 					if ((mutationCount /= 2) == 0)
 						break;
-					if (mutationCount < 2)
+					if (mutationCount > 2)
+						maxFailedNumber = maxFailedNumber * 2;
+					else if (mutationCount == 2)
 						maxFailedNumber = maxFailedNumber * 4;
 					else
-						maxFailedNumber = maxFailedNumber * 2;
+						maxFailedNumber = maxFailedNumber * 10;
 					failedNumber = 0;
 				}
 			}
