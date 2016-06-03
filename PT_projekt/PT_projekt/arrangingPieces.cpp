@@ -4,17 +4,29 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <deque>
 
 
 namespace {
 
-	arrangedPieces_t createFirstSpecimen(std::list<cv::Mat> &pieces)
+	arrangedPieces_t createRandomSpecimen(std::list<cv::Mat> &pieces)
 	{
+		int maxValuePlusOne = (size_t)(std::sqrt(pieces.size())) + 2;
+		int minValue = -maxValuePlusOne / 2;
+		maxValuePlusOne += minValue;
+		std::deque<position_t> remainingPositions;
+		for (int i = minValue; i != maxValuePlusOne; ++i)
+			for (int j = minValue; j != maxValuePlusOne; ++j)
+				remainingPositions.push_back(position_t(i, j));
 		arrangedPieces_t arrangedPieces;
 		arrangedPieces.reserve(pieces.size());
-		int x = 0;
 		for (cv::Mat &piece : pieces)
-			arrangedPieces.push_back(ArrangedPiece{ piece, Rotation::R0, position_t(++x, 0) });
+		{
+			const size_t i = rand() % remainingPositions.size();
+			const auto iterator = remainingPositions.begin() + i;
+			arrangedPieces.push_back(ArrangedPiece{ piece, (Rotation)(rand()%4), *iterator });
+			remainingPositions.erase(iterator);
+		}
 		return arrangedPieces;
 	}
 
@@ -376,7 +388,7 @@ namespace {
 std::vector<ArrangedPiece> arrangePieces(std::list<cv::Mat> &pieces)
 {
 	std::cout << "Arranging pieces..." << std::endl;
-	std::vector<ArrangedPiece> arrangedPieces = createFirstSpecimen(pieces);
+	std::vector<ArrangedPiece> arrangedPieces = createRandomSpecimen(pieces);
 	doEvolution(arrangedPieces);
 	return arrangedPieces;
 }
