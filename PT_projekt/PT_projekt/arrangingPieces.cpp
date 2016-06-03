@@ -167,7 +167,7 @@ namespace {
 	double compareColors(const Sampler &sampler1, const Sampler &sampler2)
 	{
 		const unsigned minLength = std::min(sampler1.getLength(), sampler2.getLength());
-		const unsigned samplesNumber = (int)(minLength / (std::log((double)minLength)));
+		const unsigned samplesNumber = (int)(minLength / std::log((double)minLength)) / 2;
 		const double stepSize = 1.0 / samplesNumber;
 		double result = 0.0;
 		double currentPosition = stepSize * 0.5;
@@ -262,57 +262,67 @@ namespace {
 		return true;
 	}
 
+	inline void rotatePiece(ArrangedPiece &arrangedPiece)
+	{
+		arrangedPiece.rotation = (Rotation)(rand() % 4);
+	}
+
+	void movePiece(arrangedPieces_t &arrangedPieces, piecesInVectorMap_t &piecesInVectorMap, ArrangedPiece &arrangedPiece1, size_t i)
+	{
+		size_t j = rand() % (arrangedPieces.size() - 1);
+		if (j >= i)
+			++j;
+		position_t position = arrangedPiece1.position;
+		switch (rand() % 4)
+		{
+		case 0:
+			--position.first;
+			break;
+		case 1:
+			++position.first;
+			break;
+		case 2:
+			--position.second;
+			break;
+		case 3:
+			++position.second;
+			break;
+		}
+		auto founded = piecesInVectorMap.find(position);
+		if (founded == piecesInVectorMap.cend())
+		{
+			position_t lastPosition = arrangedPiece1.position;
+			piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
+			arrangedPiece1.position = position;
+			piecesInVectorMap.emplace(position, i);
+			const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
+			const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
+			if (columnRemoved || rowRemoved)
+				piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
+		}
+		else
+		{
+			j = founded->second;
+			ArrangedPiece &arrangedPiece2 = arrangedPieces[j];
+			piecesInVectorMap.erase(founded);
+			piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
+			arrangedPiece2.position = arrangedPiece1.position;
+			arrangedPiece1.position = position;
+			piecesInVectorMap.emplace(arrangedPiece1.position, i);
+			piecesInVectorMap.emplace(arrangedPiece2.position, j);
+		}
+	}
+
 	void mutate(arrangedPieces_t &arrangedPieces, piecesInVectorMap_t &piecesInVectorMap, unsigned mutationCount)
 	{
 		for (; mutationCount != 0; --mutationCount)
 		{
 			const size_t i = rand() % arrangedPieces.size();
-			ArrangedPiece &arrangedPiece1 = arrangedPieces[i];
+			ArrangedPiece &arrangedPiece = arrangedPieces[i];
 
-			arrangedPiece1.rotation = (Rotation)(rand() % 4);
+			rotatePiece(arrangedPiece);
 
-			size_t j = rand() % (arrangedPieces.size() - 1);
-			if (j >= i)
-				++j;
-			position_t position = arrangedPiece1.position;
-			switch (rand() % 4)
-			{
-			case 0:
-				--position.first;
-				break;
-			case 1:
-				++position.first;
-				break;
-			case 2:
-				--position.second;
-				break;
-			case 3:
-				++position.second;
-				break;
-			}
-			auto founded = piecesInVectorMap.find(position);
-			if (founded == piecesInVectorMap.cend())
-			{
-				position_t lastPosition = arrangedPiece1.position;
-				piecesInVectorMap.erase(piecesInVectorMap.find(lastPosition));
-				arrangedPiece1.position = position;
-				piecesInVectorMap.emplace(position, i);
-				const bool columnRemoved = removeROCIfEmpty(lastPosition, &position_t::first, arrangedPieces);
-				const bool rowRemoved = removeROCIfEmpty(lastPosition, &position_t::second, arrangedPieces);
-				if (columnRemoved || rowRemoved)
-					piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
-			}
-			else
-			{
-				j = founded->second;
-				ArrangedPiece &arrangedPiece2 = arrangedPieces[j];
-				piecesInVectorMap.erase(founded);
-				piecesInVectorMap.erase(piecesInVectorMap.find(arrangedPiece1.position));
-				arrangedPiece2.position = arrangedPiece1.position;
-				arrangedPiece1.position = position;
-				piecesInVectorMap.emplace(arrangedPiece1.position, i);
-				piecesInVectorMap.emplace(arrangedPiece2.position, j);
-			}
+			movePiece(arrangedPieces, piecesInVectorMap, arrangedPiece, i);
 		}
 	}
 
@@ -323,11 +333,11 @@ namespace {
 		#else
 		unsigned maxFailedNumber = 128;
 		#endif
-		unsigned mutationCount = 512;
+		unsigned mutationCount = 128;
 		unsigned failedNumber = 0;
 		piecesInVectorMap_t piecesInVectorMap = createPiecesInVectorMap(arrangedPieces);
 		double lastRating = calculateRating(arrangedPieces, piecesInVectorMap);
-		std::cout << "Initial rating: " << lastRating << std::endl;
+		std::cout << "\tInitial rating: " << lastRating << std::endl;
 		while (true)
 		{
 			arrangedPieces_t arrangedPiecesCopy = arrangedPieces;
@@ -358,13 +368,14 @@ namespace {
 				}
 			}
 		}
-		std::cout << "Final rating: " << lastRating << std::endl;
+		std::cout << "\tFinal rating: " << lastRating << std::endl;
 	}
 
 }//
 
 std::vector<ArrangedPiece> arrangePieces(std::list<cv::Mat> &pieces)
 {
+	std::cout << "Arranging pieces..." << std::endl;
 	std::vector<ArrangedPiece> arrangedPieces = createFirstSpecimen(pieces);
 	doEvolution(arrangedPieces);
 	return arrangedPieces;
