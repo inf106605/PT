@@ -6,6 +6,8 @@
 #include <map>
 #include <deque>
 
+#include "Sampler.hpp"
+
 
 namespace {
 
@@ -56,112 +58,6 @@ namespace {
 		return lengthPenalty;
 	}
 
-	class Sampler
-	{
-	public:
-		enum Side { UP = 0, LEFT = 1, DOWN = 2, RIGHT = 3 };
-		Sampler(const cv::Mat &image, const Side side, const bool first);
-		~Sampler() = default;
-		unsigned getLength() const { return length; }
-		const cv::Vec3b& get(double percent) const;
-		static Side reverseSide(Side side) { return (Side)((side + 2) % 4); }
-	private:
-		static unsigned getLength(const cv::Mat &image,  Side side) { if (side == Side::UP || side == Side::DOWN) return image.cols; else return image.rows; }
-		const cv::Mat &image;
-		const unsigned length;
-		cv::Point startPoint;
-		cv::Point vector;
-	public:
-		Sampler(const Sampler &) = delete;
-		Sampler& operator=(const Sampler &) = delete;
-	};
-
-	inline const cv::Vec3b& Sampler::get(double percent) const
-	{
-		return image.at<cv::Vec3b>(startPoint + (vector * (int)(length*percent)));
-	}
-
-	Sampler::Sampler(const cv::Mat &image, const Side side, const bool first) :
-		image(image),
-		length(getLength(image, side))
-	{
-		{
-			const unsigned widthMinusTwo = getLength(image, (Side)((side + 1) % 4)) - 2;
-			switch (side)
-			{
-			case Side::UP:
-				startPoint.y = widthMinusTwo;
-				break;
-			case Side::LEFT:
-				startPoint.x = 1;
-				break;
-			case Side::DOWN:
-				startPoint.y = 1;
-				break;
-			case Side::RIGHT:
-				startPoint.x = widthMinusTwo;
-				break;
-			}
-		}
-		{
-			const unsigned lengthMinusOne = length - 1;
-			if (side == Side::UP || side == Side::DOWN)
-			{
-				vector.y = 0;
-				if ((side == Side::UP) == first)
-				{
-					vector.x = 1;
-					startPoint.x = 0;
-				}
-				else
-				{
-					vector.x = -1;
-					startPoint.x = lengthMinusOne;
-				}
-			}
-			else
-			{
-				vector.x = 0;
-				if ((side == Side::LEFT) == first)
-				{
-					vector.y = 1;
-					startPoint.y = 0;
-				}
-				else
-				{
-					vector.y = -1;
-					startPoint.y = lengthMinusOne;
-				}
-			}
-		}
-	}
-
-	Sampler generateSampler(const ArrangedPiece &arrangedPiece1, const ArrangedPiece &arrangedPiece2, const bool first)
-	{
-		Sampler::Side side;
-		if (arrangedPiece1.position.first != arrangedPiece2.position.first)
-		{
-			if (arrangedPiece1.position.first > arrangedPiece2.position.first)
-				side = Sampler::Side::LEFT;
-			else
-				side = Sampler::Side::RIGHT;
-		}
-		else
-		{
-			if (arrangedPiece1.position.second > arrangedPiece2.position.second)
-				side = Sampler::Side::DOWN;
-			else
-				side = Sampler::Side::UP;
-		}
-		if (!first)
-			side = Sampler::reverseSide(side);
-		const ArrangedPiece arrangedPiece = first ? arrangedPiece1 : arrangedPiece2;
-		side = (Sampler::Side)((side + arrangedPiece.rotation) % 4);
-		// The code below is marked as an error by the Visual Studio but it is correct.
-		// The compiler will not use the deleted copy constructor due to the return value optimization.
-		return Sampler(arrangedPiece.piece, side, first);
-	}
-
 	bool lenghtsAreSimilar(unsigned length1, unsigned length2)
 	{
 		if (length1 > length2)
@@ -201,8 +97,8 @@ namespace {
 	{
 		// The code below is marked as an error by the Visual Studio but it is correct.
 		// The compiler will not use the deleted copy constructor due to the copy elision optimization.
-		const Sampler sampler1 = generateSampler(arrangedPiece1, arrangedPiece2, true);
-		const Sampler sampler2 = generateSampler(arrangedPiece1, arrangedPiece2, false);
+		const Sampler sampler1 = Sampler::generate(arrangedPiece1, arrangedPiece2, true);
+		const Sampler sampler2 = Sampler::generate(arrangedPiece1, arrangedPiece2, false);
 		if (!lenghtsAreSimilar(sampler1.getLength(), sampler2.getLength()))
 			return -1.0;
 		return compareColors(sampler1, sampler2);

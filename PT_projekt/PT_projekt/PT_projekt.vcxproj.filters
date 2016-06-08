@@ -21,6 +21,9 @@
     <Filter Include="Source Files\imageReconstruction\mergingPieces">
       <UniqueIdentifier>{5e6d3a93-eb95-4ba8-ac3f-e47a7c8b994b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\imageReconstruction\arrangingPieces\evolution">
+      <UniqueIdentifier>{cb445e79-6605-4123-94a0-f75083765e13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,6 +44,9 @@
     <ClCompile Include="mergingPieces.cpp">
       <Filter>Source Files\imageReconstruction\mergingPieces</Filter>
     </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imageReconstruction.hpp">
@@ -57,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="mergingPieces.hpp">
       <Filter>Source Files\imageReconstruction\mergingPieces</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.hpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -125,6 +125,7 @@
     <ClCompile Include="imageReconstruction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mergingPieces.cpp" />
+    <ClCompile Include="Sampler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arrangingPieces.hpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="findingPieces.hpp" />
     <ClInclude Include="imageReconstruction.hpp" />
     <ClInclude Include="mergingPieces.hpp" />
+    <ClInclude Include="Sampler.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
