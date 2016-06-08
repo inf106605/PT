@@ -5,50 +5,58 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\imageReconstruction">
+      <UniqueIdentifier>{f78a4a64-05e0-40f1-8287-e5f0a087c516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imageReconstruction\arrangingPieces">
+      <UniqueIdentifier>{ba8f25fe-55ae-4ee7-9337-38dbe4257190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imageReconstruction\findingPieces">
+      <UniqueIdentifier>{055ddc19-6d42-475f-8421-40183a1c771d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imageReconstruction\mergingPieces">
+      <UniqueIdentifier>{5e6d3a93-eb95-4ba8-ac3f-e47a7c8b994b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="findingPieces.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="filteringOutOverlappingRectangles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imageReconstruction.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imageReconstruction</Filter>
     </ClCompile>
     <ClCompile Include="arrangingPieces.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imageReconstruction\arrangingPieces</Filter>
+    </ClCompile>
+    <ClCompile Include="findingPieces.cpp">
+      <Filter>Source Files\imageReconstruction\findingPieces</Filter>
+    </ClCompile>
+    <ClCompile Include="filteringOutOverlappingRectangles.cpp">
+      <Filter>Source Files\imageReconstruction\findingPieces</Filter>
     </ClCompile>
     <ClCompile Include="mergingPieces.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imageReconstruction\mergingPieces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filteringOutOverlappingRectangles.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="imageReconstruction.hpp">
+      <Filter>Source Files\imageReconstruction</Filter>
     </ClInclude>
     <ClInclude Include="arrangingPieces.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\imageReconstruction\arrangingPieces</Filter>
     </ClInclude>
     <ClInclude Include="findingPieces.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\imageReconstruction\findingPieces</Filter>
     </ClInclude>
-    <ClInclude Include="imageReconstruction.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="filteringOutOverlappingRectangles.hpp">
+      <Filter>Source Files\imageReconstruction\findingPieces</Filter>
     </ClInclude>
     <ClInclude Include="mergingPieces.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\imageReconstruction\mergingPieces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

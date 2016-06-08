@@ -257,7 +257,7 @@ namespace {
 		indyvidual.rating = mathRating - lengthPenalty;
 	}
 
-	Indyvidual createRandomIndyvidual(std::list<cv::Mat> &pieces)
+	Indyvidual createRandomIndyvidual(pieces_t &pieces)
 	{
 		int maxValuePlusOne = (size_t)(std::sqrt(pieces.size())) + 2;
 		int minValue = -maxValuePlusOne / 2;
@@ -358,7 +358,7 @@ namespace {
 
 	typedef std::deque<Indyvidual> generation_t;
 
-	generation_t createFirstGeneration(std::list<cv::Mat> &pieces)
+	generation_t createFirstGeneration(pieces_t &pieces)
 	{
 		const size_t FIRST_GENERATION_SIZE = 1;
 		generation_t generation;
@@ -378,7 +378,7 @@ namespace {
 		return improvement;
 	}
 
-	Indyvidual doEvolution(std::list<cv::Mat> &pieces)
+	Indyvidual doEvolution(pieces_t &pieces)
 	{
 		generation_t generation = createFirstGeneration(pieces);
 		#ifdef _DEBUG
@@ -417,7 +417,7 @@ namespace {
 
 }//
 
-std::vector<ArrangedPiece> arrangePieces(std::list<cv::Mat> &pieces)
+std::vector<ArrangedPiece> arrangePieces(pieces_t &pieces)
 {
 	std::cout << "Arranging pieces..." << std::endl;
 	//std::vector<ArrangedPiece> arrangedPieces = createRandomSpecimen(pieces);

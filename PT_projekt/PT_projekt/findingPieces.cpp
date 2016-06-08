@@ -107,9 +107,10 @@ namespace {
 		return dst;
 	}
 
-	std::list<cv::Mat> cropImages(cv::Mat image, rectangles_t squares)
+	pieces_t cropImages(cv::Mat image, rectangles_t squares)
 	{
-		std::list<cv::Mat> listCropImage;
+		pieces_t listCropImage;
+		listCropImage.reserve(squares.size());
 
 		const std::string name = "./pieces/piece";
 		const std::string extension = ".png";
@@ -147,11 +148,11 @@ namespace {
 	}
 }
 
-std::list<cv::Mat> findPieces(const cv::Mat &inputImage)
+pieces_t findPieces(const cv::Mat &inputImage)
 {
 	std::cout << "Finding pieces of the document in the input image..." << std::endl;
 	rectangles_t rectangles = findSquares(inputImage);
 	rectangles = filterOutOverlappingRectangles(rectangles);
-	std::list<cv::Mat> result = cropImages(inputImage, rectangles);
+	pieces_t result = cropImages(inputImage, rectangles);
 	return result;
 }
