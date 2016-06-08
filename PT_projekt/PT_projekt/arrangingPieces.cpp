@@ -356,9 +356,31 @@ namespace {
 		}
 	}
 
+	typedef std::deque<Indyvidual> generation_t;
+
+	generation_t createFirstGeneration(std::list<cv::Mat> &pieces)
+	{
+		const size_t FIRST_GENERATION_SIZE = 1;
+		generation_t generation;
+		for (size_t i = 0; i != FIRST_GENERATION_SIZE; ++i)
+			generation.push_back(createRandomIndyvidual(pieces));
+		return generation;
+	}
+
+	double nextGeneration(generation_t &generation, const unsigned mutationCount)
+	{
+		Indyvidual indyvidualCopy = generation.front();
+		mutate(indyvidualCopy, mutationCount);
+		calculateRating(indyvidualCopy);
+		double improvement = indyvidualCopy.rating - generation.front().rating;
+		if (improvement > 0)
+			generation.front() = std::move(indyvidualCopy);
+		return improvement;
+	}
+
 	Indyvidual doEvolution(std::list<cv::Mat> &pieces)
 	{
-		Indyvidual indyvidual = createRandomIndyvidual(pieces);
+		generation_t generation = createFirstGeneration(pieces);
 		#ifdef _DEBUG
 		unsigned maxFailedNumber = 2;
 		#else
@@ -368,13 +390,9 @@ namespace {
 		unsigned failedNumber = 0;
 		while (true)
 		{
-			Indyvidual indyvidualCopy = indyvidual;
-			mutate(indyvidualCopy, mutationCount);
-			calculateRating(indyvidualCopy);
-
-			if (indyvidual.rating < indyvidualCopy.rating)
+			const double improvement = nextGeneration(generation, mutationCount);
+			if (improvement > 0.0)
 			{
-				indyvidual = std::move(indyvidualCopy);
 				failedNumber = 0;
 			}
 			else
@@ -393,7 +411,8 @@ namespace {
 				}
 			}
 		}
-		return indyvidual;
+		Indyvidual result = std::move(generation.front());
+		return result;
 	}
 
 }//
