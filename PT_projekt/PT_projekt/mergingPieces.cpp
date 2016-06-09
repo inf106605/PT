@@ -118,6 +118,9 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 	std::vector<int> sizeEveryCols;
 	std::vector<int> sizeEveryRows;
 
+	std::vector<int> widthEveryCols;
+	std::vector<int> heightEveryRows;
+
 	// maksymalne wartoœci kolumn oraz wierszy
 
 	const int ColsCount = CountCols(arrangedPieces);
@@ -129,7 +132,7 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 	for (const ArrangedPiece &i : arrangedPieces)
 	{
 		const int columnNumber = i.position.first; // kolumna 
-		const int width = i.piece.cols;
+		const int width = i.piece.cols; // wiersz
 
 		const int rowsNumber = i.position.second;
 		const int height = i.piece.rows;
@@ -138,21 +141,42 @@ cv::Mat mergePieces(arrangedPieces_t &arrangedPieces)
 		sizeEveryRows[rowsNumber] = std::max(height, sizeEveryRows[rowsNumber]);
 	}
 	
+
+
 	sizeEveryCols.insert(sizeEveryCols.begin(), 0);
 	for (size_t i = 1; i < sizeEveryCols.size(); i++)
+	{
+		widthEveryCols.push_back(sizeEveryCols[i]);
 		sizeEveryCols[i] += sizeEveryCols[i - 1];
-
+	}
 	sizeEveryRows.insert(sizeEveryRows.begin(), 0);
 	for (size_t i = 1; i < sizeEveryRows.size(); i++)
+	{
+		heightEveryRows.push_back(sizeEveryRows[i]);
 		sizeEveryRows[i] += sizeEveryRows[i - 1];
+	}
 
 	cv::Mat matrixOutput(sizeEveryRows.back(), sizeEveryCols.back(), arrangedPieces[0].piece.type(), cvScalar(255, 255, 255));
 	
 	for (size_t i = 0; i < arrangedPieces.size(); i++)
 	{
+		const int columnNumber = arrangedPieces[i].position.first;
+		const int rowsNumber = arrangedPieces[i].position.second;
+
+		const int columnWidth = widthEveryCols[columnNumber];
+		const int columnHeight = heightEveryRows[rowsNumber];
+
+		const cv::Rect rectangle(sizeEveryCols[columnNumber], sizeEveryRows[rowsNumber], columnWidth, columnHeight);
 		
-		const cv::Rect rectangle(sizeEveryCols[arrangedPieces[i].position.first], sizeEveryRows[arrangedPieces[i].position.second], arrangedPieces[i].piece.cols, arrangedPieces[i].piece.rows);
-		arrangedPieces[i].piece.copyTo(matrixOutput(rectangle));
+		cv::Size size(columnWidth, columnHeight);
+		cv::Mat resizedPiece(columnWidth, columnHeight, arrangedPieces[0].piece.type(), cvScalar(255, 255, 255));
+		cv::resize(arrangedPieces[i].piece, resizedPiece, size);
+		/*
+		std::cout << "Rectangle-> Height: " << rectangle.height << " Width: " << rectangle.width << " x=" << rectangle.x << " y=" << rectangle.y << std::endl;
+		std::cout << "Matrix-> Height: " << matrixOutput.rows << " Width: " << matrixOutput.cols << std::endl;
+		std::cout << "ResizedPiece-> Height: " << resizedPiece.rows << " Width: " << resizedPiece.cols << std::endl;
+		*/
+		resizedPiece.copyTo(matrixOutput(rectangle));
 	}
 
 	return matrixOutput;
