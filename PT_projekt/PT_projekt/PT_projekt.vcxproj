@@ -122,6 +122,7 @@
     <ClCompile Include="arrangingPieces.cpp" />
     <ClCompile Include="filteringOutOverlappingRectangles.cpp" />
     <ClCompile Include="findingPieces.cpp" />
+    <ClCompile Include="Generation.cpp" />
     <ClCompile Include="imageReconstruction.cpp" />
     <ClCompile Include="Indyvidual.cpp" />
     <ClCompile Include="main.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="arrangingPieces.hpp" />
     <ClInclude Include="filteringOutOverlappingRectangles.hpp" />
     <ClInclude Include="findingPieces.hpp" />
+    <ClInclude Include="Generation.hpp" />
     <ClInclude Include="imageReconstruction.hpp" />
     <ClInclude Include="Indyvidual.hpp" />
     <ClInclude Include="mergingPieces.hpp" />

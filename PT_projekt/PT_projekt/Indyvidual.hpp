@@ -27,13 +27,18 @@ public:
 	const position_t& getPosition(const size_t n) const { return arrangedPieces[n].position; }
 	void setPosition(const size_t n, const position_t position);
 
+	void mutate(unsigned mutationCount);
+
 	const piecesInVectorMap_t& getPiecesInVectorMap() const { if (!isPiecesInVectorMapUpdated()) updatePiecesInVectorMap(); return piecesInVectorMap; }
 	double getRating() const { if (!ratingUpdated) updateRating();  return rating; }
-
 
 private:
 	void createPiecesInVectorMap();
 	void createRandomRotationsAndPositions(pieces_t &pieces);
+
+	bool removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc);
+	void rotatePiece(const size_t i);
+	void movePiece(const size_t i);
 
 	bool isPiecesInVectorMapUpdated() const { return outdatedPiecesInVectorMap.empty(); }
 	void updatePiecesInVectorMap() const;
@@ -44,7 +49,4 @@ private:
 	mutable std::unordered_map<size_t, position_t> outdatedPiecesInVectorMap;
 	mutable double rating;
 	mutable bool ratingUpdated;
-
-public:
-	Indyvidual() = delete;
 };
