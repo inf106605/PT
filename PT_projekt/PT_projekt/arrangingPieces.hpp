@@ -20,6 +20,15 @@ enum Rotation
 
 typedef std::pair<int, int> position_t;
 
+namespace std
+{
+	template <>
+	struct hash<position_t>
+	{
+		size_t operator()(position_t const & x) const { return ((51 + std::hash<int>()(x.first)) * 51 + std::hash<int>()(x.second)); }
+	};
+}
+
 struct ArrangedPiece
 {
 	piece_t &piece;

@@ -47,6 +47,12 @@
     <ClCompile Include="Sampler.cpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClCompile>
+    <ClCompile Include="rating.cpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClCompile>
+    <ClCompile Include="Indyvidual.cpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imageReconstruction.hpp">
@@ -65,6 +71,12 @@
       <Filter>Source Files\imageReconstruction\mergingPieces</Filter>
     </ClInclude>
     <ClInclude Include="Sampler.hpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="Indyvidual.hpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="rating.hpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClInclude>
   </ItemGroup>

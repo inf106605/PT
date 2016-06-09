@@ -123,8 +123,10 @@
     <ClCompile Include="filteringOutOverlappingRectangles.cpp" />
     <ClCompile Include="findingPieces.cpp" />
     <ClCompile Include="imageReconstruction.cpp" />
+    <ClCompile Include="Indyvidual.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mergingPieces.cpp" />
+    <ClCompile Include="rating.cpp" />
     <ClCompile Include="Sampler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -132,7 +134,9 @@
     <ClInclude Include="filteringOutOverlappingRectangles.hpp" />
     <ClInclude Include="findingPieces.hpp" />
     <ClInclude Include="imageReconstruction.hpp" />
+    <ClInclude Include="Indyvidual.hpp" />
     <ClInclude Include="mergingPieces.hpp" />
+    <ClInclude Include="rating.hpp" />
     <ClInclude Include="Sampler.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
