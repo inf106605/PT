@@ -45,7 +45,11 @@ namespace {
 
 int main(const int argc, const char *argv[])
 {
+	#ifdef _DEBUG
+	srand(0);
+	#else
 	srand((unsigned)time(nullptr));
+	#endif
 
 	const std::string programPath = argv[0];
 	if (argc >= 2 && (std::strcmp(argv[1], "--help") == 0))

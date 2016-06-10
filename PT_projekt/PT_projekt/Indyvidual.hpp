@@ -32,6 +32,8 @@ public:
 	const piecesInVectorMap_t& getPiecesInVectorMap() const { if (!isPiecesInVectorMapUpdated()) updatePiecesInVectorMap(); return piecesInVectorMap; }
 	double getRating() const { if (!ratingUpdated) updateRating();  return rating; }
 
+	Indyvidual operator*(const Indyvidual &indyvidual) const;
+
 private:
 	void createPiecesInVectorMap();
 	void createRandomRotationsAndPositions(pieces_t &pieces);

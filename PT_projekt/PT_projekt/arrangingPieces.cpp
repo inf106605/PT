@@ -14,11 +14,11 @@ arrangedPieces_t arrangePieces(pieces_t &pieces)
 	std::cout << "Arranging pieces..." << std::endl;
 	Generation generation(pieces);
 	#ifdef _DEBUG
-	unsigned maxFailedNumber = 2;
+	unsigned maxFailedNumber = 1;
 	#else
-	unsigned maxFailedNumber = 128;
+	unsigned maxFailedNumber = 32;
 	#endif
-	unsigned mutationCount = 128;
+	unsigned mutationCount = 8;
 	unsigned failedNumber = 0;
 	while (true)
 	{

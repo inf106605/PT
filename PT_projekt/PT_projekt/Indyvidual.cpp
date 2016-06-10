@@ -53,6 +53,12 @@ void Indyvidual::createRandomRotationsAndPositions(pieces_t &pieces)
 	}
 }
 
+Indyvidual Indyvidual::operator*(const Indyvidual &indyvidual) const
+{
+	//TODO
+	return *this;
+}
+
 void Indyvidual::createPiecesInVectorMap()
 {
 	for (size_t i = 0; i != arrangedPieces.size(); ++i)
