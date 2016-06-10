@@ -65,17 +65,6 @@ void Generation::createNewIndyviduals(const unsigned mutationCount, pieces_t &pi
 //TODO leave a few random (not best) indyviduals
 void Generation::doSelection()
 {
-	if (indyviduals.size() <= MAX_SIZE)
-		return;
-	std::priority_queue<double> sortedRatings;
-	for (const auto &indyvidual : indyviduals)
-		sortedRatings.push(indyvidual->getRating());
-	for (size_t i = 0; i != MAX_SIZE; ++i)
-		sortedRatings.pop();
-	const double bestRatingToErase = sortedRatings.top();
-	for (auto i = indyviduals.begin(); i != indyviduals.end() && indyviduals.size() != MAX_SIZE;)
-		if ((*i)->getRating() <= bestRatingToErase)
-			i = indyviduals.erase(i);
-		else
-			++i;
+	std::sort(indyviduals.begin(), indyviduals.end(), [](const indyvidual_prt_t &i1, const indyvidual_prt_t &i2) -> bool { return i1->getRating() < i2->getRating(); });
+	indyviduals.erase(indyviduals.begin(), indyviduals.end() - MAX_SIZE);
 }

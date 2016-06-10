@@ -15,7 +15,7 @@ public:
 
 	double switchToNext(const unsigned mutationCount, pieces_t &pieces);
 
-	const Indyvidual& getBest() const { return *indyviduals.front(); }
+	const Indyvidual& getBest() const { return *indyviduals.back(); }
 	double getRating() const { return rating; }
 
 private:
