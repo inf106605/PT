@@ -22,7 +22,7 @@ arrangedPieces_t arrangePieces(pieces_t &pieces)
 	unsigned failedNumber = 0;
 	while (true)
 	{
-		const double improvement = generation.switchToNext(mutationCount);
+		const double improvement = generation.switchToNext(mutationCount, pieces);
 		if (improvement > 0.0)
 		{
 			failedNumber = 0;
@@ -43,5 +43,5 @@ arrangedPieces_t arrangePieces(pieces_t &pieces)
 			}
 		}
 	}
-	return generation[0].getArrangedPieces();
+	return generation.getBest().getArrangedPieces();
 }
