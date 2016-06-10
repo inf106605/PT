@@ -58,11 +58,7 @@ namespace {
 		if (result <= 0.0)
 			result = 0.0;
 		else
-		{
 			result *= stepSize;
-			if (result > 0.7)
-				result = 2.0;
-		}
 		return result;
 	}
 
