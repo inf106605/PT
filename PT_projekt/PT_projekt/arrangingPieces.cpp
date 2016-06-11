@@ -63,5 +63,9 @@ arrangedPieces_t arrangePieces(pieces_t &pieces)
 			}
 		}
 	}
-	return generation.getBest().getArrangedPieces();
+	const Indyvidual &result = generation.getBest();
+	#ifdef _DEVEL
+	std::cout << "Final rating:\t" << result.getRating() << std::endl;
+	#endif
+	return result.getArrangedPieces();
 }

@@ -14,6 +14,7 @@ public:
 	typedef std::unordered_map<position_t, size_t> piecesInVectorMap_t;
 
 	Indyvidual(pieces_t &pieces);
+	Indyvidual(const Indyvidual &indyvidual1, const Indyvidual &indyvidual2);
 	Indyvidual(const Indyvidual &) = default;
 	Indyvidual(Indyvidual &&indyvidual) : arrangedPieces(std::move(indyvidual.arrangedPieces)), piecesInVectorMap(std::move(indyvidual.piecesInVectorMap)), outdatedPiecesInVectorMap(std::move(indyvidual.outdatedPiecesInVectorMap)), rating(indyvidual.rating), ratingUpdated(indyvidual.ratingUpdated) {}
 	~Indyvidual() = default;
@@ -32,11 +33,10 @@ public:
 	const piecesInVectorMap_t& getPiecesInVectorMap() const { if (!isPiecesInVectorMapUpdated()) updatePiecesInVectorMap(); return piecesInVectorMap; }
 	double getRating() const { if (!ratingUpdated) updateRating();  return rating; }
 
-	Indyvidual operator*(const Indyvidual &indyvidual) const;
-
 private:
 	void createPiecesInVectorMap();
 	void createRandomRotationsAndPositions(pieces_t &pieces);
+	void crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2);
 
 	bool removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc);
 	void rotatePiece(const size_t i);

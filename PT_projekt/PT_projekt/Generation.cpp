@@ -48,15 +48,15 @@ void Generation::createNewIndyviduals(const unsigned mutationCount, pieces_t &pi
 		Indyvidual indyvidualCopy2 = *indyviduals[y];
 		indyvidualCopy1.mutate(mutationCount);
 		indyvidualCopy2.mutate(mutationCount);
-		Indyvidual newIndyvidual = indyvidualCopy1 * indyvidualCopy2;
-		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(newIndyvidual)));
+		Indyvidual newIndyvidual(indyvidualCopy1, indyvidualCopy2);
+		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(std::move(newIndyvidual))));
 	}
 	for (size_t i = 0; i != MUTATION_NUMBER; ++i)
 	{
 		const size_t x = rand() % initialSize;
 		Indyvidual newIndyvidual = *indyviduals[x];
 		newIndyvidual.mutate(mutationCount);
-		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(newIndyvidual)));
+		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(std::move(newIndyvidual))));
 	}
 	for (size_t i = 0; i != RANDOM_NUMBER; ++i)
 		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(pieces)));

@@ -1,6 +1,7 @@
 #include "Indyvidual.hpp"
 
 #include <deque>
+#include <unordered_set>
 
 #include "rating.hpp"
 
@@ -13,6 +14,17 @@ Indyvidual::Indyvidual(pieces_t &pieces) :
 	ratingUpdated(false)
 {
 	createRandomRotationsAndPositions(pieces);
+	createPiecesInVectorMap();
+}
+
+Indyvidual::Indyvidual(const Indyvidual &indyvidual1, const Indyvidual &indyvidual2) :
+	arrangedPieces(),
+	piecesInVectorMap(),
+	outdatedPiecesInVectorMap(),
+	rating(0.0),
+	ratingUpdated(false)
+{
+	crossRotationsAndPositions(indyvidual1.getArrangedPieces(), indyvidual2.getArrangedPieces());
 	createPiecesInVectorMap();
 }
 
@@ -53,10 +65,46 @@ void Indyvidual::createRandomRotationsAndPositions(pieces_t &pieces)
 	}
 }
 
-Indyvidual Indyvidual::operator*(const Indyvidual &indyvidual) const
+void Indyvidual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2)
 {
-	//TODO
-	return *this;
+	int minX = std::numeric_limits<int>::max();
+	int maxX = std::numeric_limits<int>::min();
+	int minY = std::numeric_limits<int>::max();
+	int maxY = std::numeric_limits<int>::min();
+	for (const ArrangedPiece &arrangedPiece : arrangedPieces1)
+	{
+		minX = std::min(minX, arrangedPiece.position.first);
+		maxX = std::max(maxX, arrangedPiece.position.first);
+		minY = std::min(minY, arrangedPiece.position.second);
+		maxY = std::max(maxY, arrangedPiece.position.second);
+	}
+	for (const ArrangedPiece &arrangedPiece : arrangedPieces2)
+	{
+		minX = std::min(minX, arrangedPiece.position.first);
+		maxX = std::max(maxX, arrangedPiece.position.first);
+		minY = std::min(minY, arrangedPiece.position.second);
+		maxY = std::max(maxY, arrangedPiece.position.second);
+	}
+
+	std::unordered_set<position_t> unoccupiedPositions;
+	for (int i = minX; i <= maxX; ++i)
+		for (int j = minY; j <= maxY; ++j)
+			unoccupiedPositions.emplace(i, j);
+
+	for (size_t i = 0; i != arrangedPieces1.size(); ++i)
+	{
+		const arrangedPieces_t &choosenArrangedPieces = (rand() % 2 == 0) ? arrangedPieces1 : arrangedPieces2;
+		ArrangedPiece newArrangedPiece = choosenArrangedPieces[i];
+		auto it = unoccupiedPositions.find(newArrangedPiece.position);
+		if (it == unoccupiedPositions.cend())
+		{
+			it = unoccupiedPositions.begin();
+			std::advance(it, rand() % unoccupiedPositions.size());
+			newArrangedPiece.position = *it;
+		}
+		unoccupiedPositions.erase(it);
+		arrangedPieces.push_back(newArrangedPiece);
+	}
 }
 
 void Indyvidual::createPiecesInVectorMap()
