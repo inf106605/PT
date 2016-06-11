@@ -36,7 +36,7 @@ public:
 private:
 	void createPiecesInVectorMap();
 	void createRandomRotationsAndPositions(pieces_t &pieces);
-	void crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2);
+	void crossRotationsAndPositions(const Individual &individual1, const Individual &individual2);
 
 	bool removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc);
 	void rotatePiece(const size_t i);

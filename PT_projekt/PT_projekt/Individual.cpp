@@ -24,7 +24,7 @@ Individual::Individual(const Individual &individual1, const Individual &individu
 	rating(0.0),
 	ratingUpdated(false)
 {
-	crossRotationsAndPositions(individual1.getArrangedPieces(), individual2.getArrangedPieces());
+	crossRotationsAndPositions(individual1, individual2);
 	createPiecesInVectorMap();
 }
 
@@ -65,20 +65,20 @@ void Individual::createRandomRotationsAndPositions(pieces_t &pieces)
 	}
 }
 
-void Individual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2)
+void Individual::crossRotationsAndPositions(const Individual &individual1, const Individual &individual2)
 {
 	int minX = std::numeric_limits<int>::max();
 	int maxX = std::numeric_limits<int>::min();
 	int minY = std::numeric_limits<int>::max();
 	int maxY = std::numeric_limits<int>::min();
-	for (const ArrangedPiece &arrangedPiece : arrangedPieces1)
+	for (const ArrangedPiece &arrangedPiece : individual1.getArrangedPieces())
 	{
 		minX = std::min(minX, arrangedPiece.position.first);
 		maxX = std::max(maxX, arrangedPiece.position.first);
 		minY = std::min(minY, arrangedPiece.position.second);
 		maxY = std::max(maxY, arrangedPiece.position.second);
 	}
-	for (const ArrangedPiece &arrangedPiece : arrangedPieces2)
+	for (const ArrangedPiece &arrangedPiece : individual2.getArrangedPieces())
 	{
 		minX = std::min(minX, arrangedPiece.position.first);
 		maxX = std::max(maxX, arrangedPiece.position.first);
@@ -91,9 +91,12 @@ void Individual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPiec
 		for (int j = minY; j <= maxY; ++j)
 			unoccupiedPositions.emplace(i, j);
 
-	for (size_t i = 0; i != arrangedPieces1.size(); ++i)
+	const double relativeRating1 = std::max(-40.0, std::min(40.0, individual1.getRating() - individual2.getRating()));
+	const int percentFromFirst = (int)relativeRating1 + 50;
+	for (size_t i = 0; i != individual1.getArrangedPieces().size(); ++i)
 	{
-		const arrangedPieces_t &choosenArrangedPieces = (rand() % 2 == 0) ? arrangedPieces1 : arrangedPieces2;
+		const bool getFromFirst = (rand() % 100 < percentFromFirst);
+		const arrangedPieces_t &choosenArrangedPieces = getFromFirst ? individual1.getArrangedPieces() : individual2.getArrangedPieces();
 		ArrangedPiece newArrangedPiece = choosenArrangedPieces[i];
 		auto it = unoccupiedPositions.find(newArrangedPiece.position);
 		if (it == unoccupiedPositions.cend())
