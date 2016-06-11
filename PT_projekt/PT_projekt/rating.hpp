@@ -1,6 +1,6 @@
 #pragma once
 
 
-class Indyvidual;
+class Individual;
 
-double calculateRating(const Indyvidual &indyvidual);
+double calculateRating(const Individual &individual);

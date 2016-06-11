@@ -2,19 +2,19 @@
 
 #include <cstdint>
 
-#include "Indyvidual.hpp"
+#include "Individual.hpp"
 #include "Sampler.hpp"
 
 
 namespace {
 
-	double calculateLengthPenalty(const Indyvidual &indyvidual)
+	double calculateLengthPenalty(const Individual &individual)
 	{
 		int minX = std::numeric_limits<int>::max();
 		int maxX = std::numeric_limits<int>::min();
 		int minY = std::numeric_limits<int>::max();
 		int maxY = std::numeric_limits<int>::min();
-		for (const auto &element : indyvidual.getPiecesInVectorMap())
+		for (const auto &element : individual.getPiecesInVectorMap())
 		{
 			const position_t &position = element.first;
 			if (minX > position.first)
@@ -73,10 +73,10 @@ namespace {
 		return compareColors(sampler1, sampler2);
 	}
 
-	double calculateMatchRating(const Indyvidual &indyvidual)
+	double calculateMatchRating(const Individual &individual)
 	{
-		const arrangedPieces_t &arrangedPieces = indyvidual.getArrangedPieces();
-		const Indyvidual::piecesInVectorMap_t &piecesInVectorMap = indyvidual.getPiecesInVectorMap();
+		const arrangedPieces_t &arrangedPieces = individual.getArrangedPieces();
+		const Individual::piecesInVectorMap_t &piecesInVectorMap = individual.getPiecesInVectorMap();
 
 		const double NO_NEIGHBOR_PENALTY = 0.1;
 		double matchRating = 0.0;
@@ -116,11 +116,11 @@ namespace {
 
 }
 
-double calculateRating(const Indyvidual &indyvidual)
+double calculateRating(const Individual &individual)
 {
-	static const double LENGHT_PENALTY_WEIGHT = indyvidual.getArrangedPieces().size() * 2;
-	const double lengthPenalty = calculateLengthPenalty(indyvidual) * LENGHT_PENALTY_WEIGHT;
-	const double mathRating = calculateMatchRating(indyvidual);
+	static const double LENGHT_PENALTY_WEIGHT = individual.getArrangedPieces().size() * 2;
+	const double lengthPenalty = calculateLengthPenalty(individual) * LENGHT_PENALTY_WEIGHT;
+	const double mathRating = calculateMatchRating(individual);
 	double rating = mathRating - lengthPenalty;
 	return rating;
 }

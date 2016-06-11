@@ -1,4 +1,4 @@
-#include "Indyvidual.hpp"
+#include "Individual.hpp"
 
 #include <deque>
 #include <unordered_set>
@@ -6,7 +6,7 @@
 #include "rating.hpp"
 
 
-Indyvidual::Indyvidual(pieces_t &pieces) :
+Individual::Individual(pieces_t &pieces) :
 	arrangedPieces(),
 	piecesInVectorMap(),
 	outdatedPiecesInVectorMap(),
@@ -17,18 +17,18 @@ Indyvidual::Indyvidual(pieces_t &pieces) :
 	createPiecesInVectorMap();
 }
 
-Indyvidual::Indyvidual(const Indyvidual &indyvidual1, const Indyvidual &indyvidual2) :
+Individual::Individual(const Individual &individual1, const Individual &individual2) :
 	arrangedPieces(),
 	piecesInVectorMap(),
 	outdatedPiecesInVectorMap(),
 	rating(0.0),
 	ratingUpdated(false)
 {
-	crossRotationsAndPositions(indyvidual1.getArrangedPieces(), indyvidual2.getArrangedPieces());
+	crossRotationsAndPositions(individual1.getArrangedPieces(), individual2.getArrangedPieces());
 	createPiecesInVectorMap();
 }
 
-void Indyvidual::setPosition(const size_t n, const position_t position)
+void Individual::setPosition(const size_t n, const position_t position)
 {
 	ArrangedPiece &arrangedPiece = arrangedPieces[n];
 	outdatedPiecesInVectorMap.emplace(n, arrangedPiece.position);
@@ -36,7 +36,7 @@ void Indyvidual::setPosition(const size_t n, const position_t position)
 	ratingUpdated = false;
 }
 
-void Indyvidual::mutate(unsigned mutationCount)
+void Individual::mutate(unsigned mutationCount)
 {
 	for (; mutationCount != 0; --mutationCount)
 	{
@@ -46,7 +46,7 @@ void Indyvidual::mutate(unsigned mutationCount)
 	}
 }
 
-void Indyvidual::createRandomRotationsAndPositions(pieces_t &pieces)
+void Individual::createRandomRotationsAndPositions(pieces_t &pieces)
 {
 	int maxValuePlusOne = (size_t)(std::sqrt(pieces.size())) + 2;
 	int minValue = -maxValuePlusOne / 2;
@@ -65,7 +65,7 @@ void Indyvidual::createRandomRotationsAndPositions(pieces_t &pieces)
 	}
 }
 
-void Indyvidual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2)
+void Individual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPieces1, const arrangedPieces_t &arrangedPieces2)
 {
 	int minX = std::numeric_limits<int>::max();
 	int maxX = std::numeric_limits<int>::min();
@@ -107,13 +107,13 @@ void Indyvidual::crossRotationsAndPositions(const arrangedPieces_t &arrangedPiec
 	}
 }
 
-void Indyvidual::createPiecesInVectorMap()
+void Individual::createPiecesInVectorMap()
 {
 	for (size_t i = 0; i != arrangedPieces.size(); ++i)
 		piecesInVectorMap.emplace(arrangedPieces[i].position, i);
 }
 
-bool Indyvidual::removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc)
+bool Individual::removeROCIfEmpty(const position_t &searchedPosition, int position_t::*const roc)
 {
 	const int searchedValue = searchedPosition.*roc;
 	for (const ArrangedPiece &arrangedPiece : getArrangedPieces())
@@ -131,12 +131,12 @@ bool Indyvidual::removeROCIfEmpty(const position_t &searchedPosition, int positi
 	return true;
 }
 
-void Indyvidual::rotatePiece(const size_t i)
+void Individual::rotatePiece(const size_t i)
 {
 	setRotation(i, (Rotation)(rand() % 4));
 }
 
-void Indyvidual::movePiece(const size_t i)
+void Individual::movePiece(const size_t i)
 {
 	size_t j = rand() % (getArrangedPieces().size() - 1);
 	if (j >= i)
@@ -158,7 +158,7 @@ void Indyvidual::movePiece(const size_t i)
 		++position.second;
 		break;
 	}
-	const Indyvidual::piecesInVectorMap_t &piecesInVectorMap = getPiecesInVectorMap();
+	const Individual::piecesInVectorMap_t &piecesInVectorMap = getPiecesInVectorMap();
 	auto founded = piecesInVectorMap.find(position);
 	if (founded == piecesInVectorMap.cend())
 	{
@@ -176,7 +176,7 @@ void Indyvidual::movePiece(const size_t i)
 	}
 }
 
-void Indyvidual::updatePiecesInVectorMap() const
+void Individual::updatePiecesInVectorMap() const
 {
 	for (const auto &outdatedPiece : outdatedPiecesInVectorMap)
 		piecesInVectorMap.erase(outdatedPiece.second);

@@ -8,19 +8,19 @@
 #include "rating.hpp"
 
 
-class Indyvidual
+class Individual
 {
 public:
 	typedef std::unordered_map<position_t, size_t> piecesInVectorMap_t;
 
-	Indyvidual(pieces_t &pieces);
-	Indyvidual(const Indyvidual &indyvidual1, const Indyvidual &indyvidual2);
-	Indyvidual(const Indyvidual &) = default;
-	Indyvidual(Indyvidual &&indyvidual) : arrangedPieces(std::move(indyvidual.arrangedPieces)), piecesInVectorMap(std::move(indyvidual.piecesInVectorMap)), outdatedPiecesInVectorMap(std::move(indyvidual.outdatedPiecesInVectorMap)), rating(indyvidual.rating), ratingUpdated(indyvidual.ratingUpdated) {}
-	~Indyvidual() = default;
+	Individual(pieces_t &pieces);
+	Individual(const Individual &individual1, const Individual &individual2);
+	Individual(const Individual &) = default;
+	Individual(Individual &&individual) : arrangedPieces(std::move(individual.arrangedPieces)), piecesInVectorMap(std::move(individual.piecesInVectorMap)), outdatedPiecesInVectorMap(std::move(individual.outdatedPiecesInVectorMap)), rating(individual.rating), ratingUpdated(individual.ratingUpdated) {}
+	~Individual() = default;
 
-	Indyvidual& operator=(const Indyvidual &) = default;
-	Indyvidual& operator=(Indyvidual &&indyvidual) { arrangedPieces = std::move(indyvidual.arrangedPieces); piecesInVectorMap = std::move(indyvidual.piecesInVectorMap); outdatedPiecesInVectorMap = std::move(indyvidual.outdatedPiecesInVectorMap); rating = indyvidual.rating; ratingUpdated = indyvidual.ratingUpdated; return *this; }
+	Individual& operator=(const Individual &) = default;
+	Individual& operator=(Individual &&individual) { arrangedPieces = std::move(individual.arrangedPieces); piecesInVectorMap = std::move(individual.piecesInVectorMap); outdatedPiecesInVectorMap = std::move(individual.outdatedPiecesInVectorMap); rating = individual.rating; ratingUpdated = individual.ratingUpdated; return *this; }
 
 	const arrangedPieces_t& getArrangedPieces() const { return arrangedPieces; }
 	Rotation getRotation(const size_t n) const { return arrangedPieces[n].rotation; }

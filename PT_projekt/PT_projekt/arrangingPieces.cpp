@@ -6,7 +6,7 @@
 #include <deque>
 #include <chrono>
 
-#include "Indyvidual.hpp"
+#include "Individual.hpp"
 #include "Generation.hpp"
 
 
@@ -63,7 +63,7 @@ arrangedPieces_t arrangePieces(pieces_t &pieces)
 			}
 		}
 	}
-	const Indyvidual &result = generation.getBest();
+	const Individual &result = generation.getBest();
 	#ifdef _DEVEL
 	std::cout << "Final rating:\t" << result.getRating() << std::endl;
 	#endif

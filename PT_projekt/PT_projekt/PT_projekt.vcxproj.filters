@@ -50,10 +50,10 @@
     <ClCompile Include="rating.cpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClCompile>
-    <ClCompile Include="Indyvidual.cpp">
+    <ClCompile Include="Generation.cpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClCompile>
-    <ClCompile Include="Generation.cpp">
+    <ClCompile Include="Individual.cpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,13 +76,13 @@
     <ClInclude Include="Sampler.hpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClInclude>
-    <ClInclude Include="Indyvidual.hpp">
-      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
-    </ClInclude>
     <ClInclude Include="rating.hpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClInclude>
     <ClInclude Include="Generation.hpp">
+      <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="Individual.hpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClInclude>
   </ItemGroup>

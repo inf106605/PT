@@ -4,7 +4,7 @@
 #include <deque>
 #include <memory>
 
-#include "Indyvidual.hpp"
+#include "Individual.hpp"
 
 
 class Generation
@@ -15,12 +15,12 @@ public:
 
 	double switchToNext(const unsigned mutationCount, pieces_t &pieces);
 
-	const Indyvidual& getBest() const { return *indyviduals.back(); }
+	const Individual& getBest() const { return *individuals.back(); }
 	double getRating() const { return rating; }
 
 private:
-	typedef std::unique_ptr<Indyvidual> indyvidual_prt_t;
-	typedef std::deque<indyvidual_prt_t> indyviduals_t;
+	typedef std::unique_ptr<Individual> individual_prt_t;
+	typedef std::deque<individual_prt_t> individuals_t;
 
 	static const size_t INITIAL_SIZE = 10;
 	static const size_t SELECTION_SIZE = 10;
@@ -31,11 +31,11 @@ private:
 
 	double calculateRating() const;
 
-	void createInitialIndyviduals(pieces_t &pieces);
-	void createNewIndyviduals(const unsigned mutationCount, pieces_t &pieces);
+	void createInitialIndividuals(pieces_t &pieces);
+	void createNewIndividuals(const unsigned mutationCount, pieces_t &pieces);
 	void doSelection();
 
-	indyviduals_t indyviduals;
+	individuals_t individuals;
 	double rating;
 
 public:
