@@ -43,7 +43,7 @@ namespace {
 } //
 
 
-int main(const int argc, const char *argv[])
+int main(int argc, const char *argv[])
 {
 	#ifdef _DEBUG
 	srand(0);
@@ -57,6 +57,15 @@ int main(const int argc, const char *argv[])
 		showHelp(programPath);
 		return 0;
 	}
+	#if defined _DEBUG || defined _DEVEL
+	bool showResult = true;
+	if (argc >= 2 && (std::strcmp(argv[1], "--no-show") == 0))
+	{
+		showResult = false;
+		--argc;
+		++argv;
+	}
+	#endif
 	if (argc != 3)
 	{
 		std::cerr << "Program takes 2 arguments!\nEnter \"'" << programPath << "' --help\" for more informations." << std::endl;
@@ -74,9 +83,12 @@ int main(const int argc, const char *argv[])
 		return -1;
 
 	#if defined _DEBUG || defined _DEVEL
-	cv::namedWindow("Display window", cv::WINDOW_NORMAL);
-	cv::imshow("Display window", outputImage);
-	cv::waitKey(0);
+	if (showResult)
+	{
+		cv::namedWindow("Display window", cv::WINDOW_NORMAL);
+		cv::imshow("Display window", outputImage);
+		cv::waitKey(0);
+	}
 	#endif
 
 	if (!saveImage(outputFilePath, outputImage))
