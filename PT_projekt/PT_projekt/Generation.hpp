@@ -23,7 +23,8 @@ private:
 	typedef std::deque<indyvidual_prt_t> indyviduals_t;
 
 	static const size_t INITIAL_SIZE = 10;
-	static const size_t MAX_SIZE = 10;
+	static const size_t SELECTION_SIZE = 10;
+	static const unsigned SELECTION_LEAVE_PERCENT = 20;
 	static const size_t CROSSES_NUMBER = 25;
 	static const size_t MUTATION_NUMBER = 10;
 	static const size_t RANDOM_NUMBER = 5;

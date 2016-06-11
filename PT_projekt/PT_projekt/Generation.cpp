@@ -62,9 +62,12 @@ void Generation::createNewIndyviduals(const unsigned mutationCount, pieces_t &pi
 		indyviduals.push_back(indyvidual_prt_t(new Indyvidual(pieces)));
 }
 
-//TODO leave a few random (not best) indyviduals
 void Generation::doSelection()
 {
 	std::sort(indyviduals.begin(), indyviduals.end(), [](const indyvidual_prt_t &i1, const indyvidual_prt_t &i2) -> bool { return i1->getRating() < i2->getRating(); });
-	indyviduals.erase(indyviduals.begin(), indyviduals.end() - MAX_SIZE);
+	for (size_t i = 0; i != indyviduals.size() - SELECTION_SIZE;)
+		if (rand() % 100 < SELECTION_LEAVE_PERCENT)
+			++i;
+		else
+			indyviduals.erase(indyviduals.begin() + i);
 }
