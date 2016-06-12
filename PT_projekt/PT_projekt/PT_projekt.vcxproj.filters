@@ -24,6 +24,12 @@
     <Filter Include="Source Files\imageReconstruction\arrangingPieces\evolution">
       <UniqueIdentifier>{cb445e79-6605-4123-94a0-f75083765e13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{3c94be60-309c-4b17-9dc8-2a2e00d2fd73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\threadPool">
+      <UniqueIdentifier>{b5b78e33-4bf2-403c-a29f-8b4fb82ae632}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +62,9 @@
     <ClCompile Include="Individual.cpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files\utils\threadPool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imageReconstruction.hpp">
@@ -84,6 +93,9 @@
     </ClInclude>
     <ClInclude Include="Individual.hpp">
       <Filter>Source Files\imageReconstruction\arrangingPieces\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.hpp">
+      <Filter>Source Files\utils\threadPool</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,8 +3,10 @@
 
 #include <deque>
 #include <memory>
+#include <mutex>
 
 #include "Individual.hpp"
+#include "ThreadPool.hpp"
 
 
 class Generation
@@ -37,6 +39,8 @@ private:
 
 	individuals_t individuals;
 	double rating;
+	ThreadPool threadPool;
+	std::mutex mutex;
 
 public:
 	Generation(const Generation &) = delete;

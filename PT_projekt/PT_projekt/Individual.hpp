@@ -13,6 +13,7 @@ class Individual
 public:
 	typedef std::unordered_map<position_t, size_t> piecesInVectorMap_t;
 
+	Individual() = default;
 	Individual(pieces_t &pieces);
 	Individual(const Individual &individual1, const Individual &individual2);
 	Individual(const Individual &) = default;

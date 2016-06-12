@@ -129,6 +129,7 @@
     <ClCompile Include="mergingPieces.cpp" />
     <ClCompile Include="rating.cpp" />
     <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arrangingPieces.hpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="mergingPieces.hpp" />
     <ClInclude Include="rating.hpp" />
     <ClInclude Include="Sampler.hpp" />
+    <ClInclude Include="ThreadPool.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -44,26 +44,62 @@ void Generation::createNewIndividuals(const unsigned mutationCount, pieces_t &pi
 		size_t y = rand() % (initialSize - 1);
 		if (y >= x)
 			++y;
-		Individual individualCopy1 = *individuals[x];
-		Individual individualCopy2 = *individuals[y];
-		individualCopy1.mutate(mutationCount);
-		individualCopy2.mutate(mutationCount);
-		Individual newIndividual(individualCopy1, individualCopy2);
-		individuals.push_back(individual_prt_t(new Individual(std::move(newIndividual))));
+		threadPool.startNew([this, mutationCount, &pieces, x, y]
+			{
+				Individual individualCopy1;
+				Individual individualCopy2;
+				{
+					std::lock_guard<std::mutex> lock(mutex);
+					individualCopy1 = *individuals[x];
+					individualCopy2 = *individuals[y];
+				}
+				individualCopy1.mutate(mutationCount);
+				individualCopy2.mutate(mutationCount);
+				Individual newIndividual(individualCopy1, individualCopy2);
+				individual_prt_t newIndividualPointer(new Individual(std::move(newIndividual)));
+				{
+					std::lock_guard<std::mutex> lock(mutex);
+					individuals.push_back(std::move(newIndividualPointer));
+				}
+			});
 	}
 	for (size_t i = 0; i != MUTATION_NUMBER; ++i)
 	{
 		const size_t x = rand() % initialSize;
-		Individual newIndividual = *individuals[x];
-		newIndividual.mutate(mutationCount);
-		individuals.push_back(individual_prt_t(new Individual(std::move(newIndividual))));
+		threadPool.startNew([this, mutationCount, x]
+			{
+				Individual newIndividual;
+				{
+					std::lock_guard<std::mutex> lock(mutex);
+					newIndividual = *individuals[x];
+				}
+				newIndividual.mutate(mutationCount);
+				individual_prt_t newIndividualPointer(new Individual(std::move(newIndividual)));
+				{
+					std::lock_guard<std::mutex> lock(mutex);
+					individuals.push_back(std::move(newIndividualPointer));
+				}
+			});
 	}
 	for (size_t i = 0; i != RANDOM_NUMBER; ++i)
-		individuals.push_back(individual_prt_t(new Individual(pieces)));
+	{
+		threadPool.startNew([this, &pieces]
+			{
+				individual_prt_t newIndividualPointer(new Individual(pieces));
+				{
+					std::lock_guard<std::mutex> lock(mutex);
+					individuals.push_back(std::move(newIndividualPointer));
+				}
+			});
+	}
+	threadPool.joinAll();
 }
 
 void Generation::doSelection()
 {
+	for (const individual_prt_t &individual : individuals)
+		threadPool.startNew([&individual]{ individual->getRating(); });
+	threadPool.joinAll();
 	std::sort(individuals.begin(), individuals.end(), [](const individual_prt_t &i1, const individual_prt_t &i2) -> bool { return i1->getRating() < i2->getRating(); });
 	for (size_t i = 0; i != individuals.size() - SELECTION_SIZE;)
 		if (rand() % 100 < SELECTION_LEAVE_PERCENT)
