@@ -51,6 +51,7 @@ void ThreadPool::threadFunction()
 			task = newTask;
 			newTask = task_t();
 		}
+		cv.notify_all();
 		task();
 		{
 			std::lock_guard<std::mutex> lock(mutex);
